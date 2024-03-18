@@ -1,5 +1,6 @@
 <template>
-    <div class="text-light">Get comp</div>
+    <div class="text-light">Home comp</div>
+
 </template>
 
 <script>
