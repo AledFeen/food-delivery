@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CourierController;
 use App\Http\Controllers\StoreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('user/check/admin', [AdminController::class, 'checkAdminExistence']);
         Route::group(['middleware' => 'isAdmin'], function () {
             Route::get('user/admin', [AdminController::class, 'selectAdmin']);
+        });
+
+        Route::get('user/check/courier', [CourierController::class, 'checkCourierExistence']);
+        Route::group(['middleware' => 'isCourier'], function () {
+            Route::get('user/courier', [CourierController::class, 'selectCourier']);
         });
 
     });

@@ -6,6 +6,7 @@
             <router-link v-if="!token" :to="{ name: 'user.registration' }">Registration</router-link>
             <router-link v-if="token && hasStore" :to="{ name: 'user.store' }">Store</router-link>
             <router-link v-if="token && isAdmin" :to="{ name: 'user.admin' }">Admin</router-link>
+            <router-link v-if="token && isCourier" :to="{ name: 'user.courier' }">Courier</router-link>
             <input v-if="token" @click.prevent="logout" type="submit" value="logout" class="btn btn-primary">
         </div>
         <router-view :key="$route.fullPath"></router-view>
@@ -20,7 +21,8 @@ export default {
         return {
             token: null,
             hasStore: false,
-            isAdmin: false
+            isAdmin: false,
+            isCourier: false
         }
     },
 
@@ -49,6 +51,13 @@ export default {
                 }).catch(err => {
                     console.log(err)
                 })
+
+                axios.get('api/user/check/courier').then(res => {
+                    this.isCourier = res.data.result;
+                    localStorage.setItem('isCourier', this.isCourier)
+                }).catch(err => {
+                    console.log(err)
+                })
             }
         },
 
@@ -57,6 +66,7 @@ export default {
                 localStorage.removeItem('x-xsrf-token')
                 localStorage.removeItem('isStore')
                 localStorage.removeItem('isAdmin')
+                localStorage.removeItem('isCourier')
             }).then(res => {
                 this.$router.push({name: 'user.login'})
             }).catch(err => {

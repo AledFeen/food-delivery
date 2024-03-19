@@ -8,6 +8,7 @@ import Registration from "./components/Registration.vue";
 import Home from "./components/Home.vue";
 import MyStore from "./components/MyStore.vue";
 import Admin from "./components/Admin.vue";
+import Courier from "./components/Courier.vue";
 
 const app = createApp({});
 
@@ -20,7 +21,8 @@ const routes = [
     { path: '/login', name: 'user.login', component: Login },
     { path: '/registration', name: 'user.registration', component: Registration },
     { path: '/myStore', name: 'user.store', component: MyStore },
-    { path: '/adminPanel', name: 'user.admin', component: Admin }
+    { path: '/adminPanel', name: 'user.admin', component: Admin },
+    { path: '/courierPanel', name: 'user.courier', component: Courier },
 ]
 
 const router = createRouter({
@@ -32,6 +34,7 @@ router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('x-xsrf-token')
     const isStore = localStorage.getItem('isStore')
     const isAdmin = localStorage.getItem('isAdmin')
+    const isCourier = localStorage.getItem('isCourier')
 
     ////защитить /myStore от входа по урл
     if (!token) {
@@ -56,6 +59,13 @@ router.beforeEach((to, from, next) => {
                 break;
             case 'user.admin':
                 if (isAdmin === 'false') {
+                    next({ name: 'home.index' });
+                } else {
+                    next();
+                }
+                break;
+            case 'user.courier':
+                if (isCourier === 'false') {
                     next({ name: 'home.index' });
                 } else {
                     next();
