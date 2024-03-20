@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CourierController;
+use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\StoreTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +24,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
+
+    Route::get('categories/get', [StoreCategoryController::class, 'getCategories']);
+    Route::get('types/get', [StoreTypeController::class, 'getTypes']);
+
     Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::get('user/check/store', [StoreController::class, 'checkStoreExistence']);
@@ -32,6 +38,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('user/check/admin', [AdminController::class, 'checkAdminExistence']);
         Route::group(['middleware' => 'isAdmin'], function () {
             Route::get('user/admin', [AdminController::class, 'selectAdmin']);
+            Route::get('/admin/users/get', [AdminController::class, 'getUsers']);
+            Route::post('/admin/users/add', [AdminController::class, 'addStore']);
         });
 
         Route::get('user/check/courier', [CourierController::class, 'checkCourierExistence']);

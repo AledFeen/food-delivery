@@ -20,9 +20,9 @@ export default {
     data() {
         return {
             token: null,
-            hasStore: false,
-            isAdmin: false,
-            isCourier: false
+            hasStore: null,
+            isAdmin: null,
+            isCourier: null
         }
     },
 
@@ -30,9 +30,15 @@ export default {
         this.getToken()
     },
 
-    updated() {
-        this.getToken()
+  //  updated() {
+   //     this.getToken()
+   // },
+    watch: {
+        $route(to, from) {
+            this.getToken()
+        }
     },
+
 
     methods: {
         getToken() {
