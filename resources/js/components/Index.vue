@@ -30,35 +30,34 @@ export default {
         this.getToken()
     },
 
-  //  updated() {
-   //     this.getToken()
-   // },
+  /*  updated() {
+        this.getToken()
+    },*/
     watch: {
         $route(to, from) {
             this.getToken()
         }
     },
 
-
     methods: {
         getToken() {
             this.token = localStorage.getItem('x-xsrf-token')
             if (this.token) {
-                axios.get('api/user/check/store').then(res => {
+                axios.get('/api/user/check/store').then(res => {
                     this.hasStore = res.data.result;
                     localStorage.setItem('isStore', this.hasStore)
                 }).catch(err => {
                     console.log(err)
                 })
 
-                axios.get('api/user/check/admin').then(res => {
+                axios.get('/api/user/check/admin').then(res => {
                     this.isAdmin = res.data.result;
                     localStorage.setItem('isAdmin', this.isAdmin)
                 }).catch(err => {
                     console.log(err)
                 })
 
-                axios.get('api/user/check/courier').then(res => {
+                axios.get('/api/user/check/courier').then(res => {
                     this.isCourier = res.data.result;
                     localStorage.setItem('isCourier', this.isCourier)
                 }).catch(err => {

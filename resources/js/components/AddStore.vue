@@ -70,7 +70,7 @@ export default {
 
         addStore() {
             const formData = new FormData()
-            formData.append('name', this.name)
+            formData.append('name', this.label)
             formData.append('description', this.description)
             formData.append('user_id', this.userId)
             formData.append('image', this.image)

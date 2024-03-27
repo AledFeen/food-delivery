@@ -1,3 +1,18 @@
+<script>
+export default {
+    name: "Test panel",
+
+    mounted() {
+        this.getStore()
+    },
+
+    methods: {
+        getStore() {
+        }
+    }
+}
+</script>
+
 <template>
     <div class="text-light">Admin panel</div>
     <div class="container-md">
@@ -16,21 +31,6 @@
         </table>
     </div>
 </template>
-
-<script>
-export default {
-    name: "Test panel",
-
-    mounted() {
-        this.getStore()
-    },
-
-    methods: {
-        getStore() {
-        }
-    }
-}
-</script>
 
 <style scoped>
 

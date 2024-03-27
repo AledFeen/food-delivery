@@ -1,7 +1,3 @@
-<template>
-    <div class="text-light">Courier panel</div>
-</template>
-
 <script>
 export default {
     name: "Courier panel",
@@ -27,6 +23,10 @@ export default {
 }
 
 </script>
+
+<template>
+    <div class="text-light">Courier panel</div>
+</template>
 
 <style scoped>
 

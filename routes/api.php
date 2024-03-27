@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourierController;
 use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreController;
@@ -32,12 +33,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
         Route::get('user/check/store', [StoreController::class, 'checkStoreExistence']);
         Route::group(['middleware' => 'isStore'], function () {
-            Route::get('user/store', [StoreController::class, 'selectUserStore']);
+            Route::get('/user/store', [StoreController::class, 'selectUserStore']);
+            Route::post('/user/store/updateProfile', [StoreController::class, 'updateStoreProfile']);
+            Route::get('/user/store/categories', [CategoryController::class, 'getCategories']);
+            Route::post('/store/add/mainCategory',[CategoryController::class, 'addMainCategory']);
+            Route::post('/store/add/subCategory',[CategoryController::class, 'addSubCategory']);
         });
 
         Route::get('user/check/admin', [AdminController::class, 'checkAdminExistence']);
         Route::group(['middleware' => 'isAdmin'], function () {
-            Route::get('user/admin', [AdminController::class, 'selectAdmin']);
+            Route::get('/user/admin', [AdminController::class, 'selectAdmin']);
             Route::get('/admin/users/get', [AdminController::class, 'getUsers']);
             Route::post('/admin/users/add', [AdminController::class, 'addStore']);
         });
