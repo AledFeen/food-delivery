@@ -1,44 +1,3 @@
-<template>
-    <div class="container-md">
-        <h1 class="mb-4 text-light">Users</h1>
-        <div v-if="users === null" class="text-light">Loading...</div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Created at</th>
-                <th scope="col">Store</th>
-                <th scope="col">Courier</th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <template v-for="user in users">
-                <tr>
-                    <th scope="row"> {{ user.user.id }}</th>
-                    <td @click.prevent="clearSelect()"> {{ user.user.name }}</td>
-                    <td @click.prevent="clearSelect()"> {{ user.user.email }}</td>
-                    <td @click.prevent="clearSelect()"> {{ user.user.created_at }}</td>
-                    <td @click.prevent="clearSelect()"> {{ user.hasStore }} </td>
-                    <td @click.prevent="clearSelect()"> {{ user.isCourier }} </td>
-                    <td><a href="#" @click.prevent="selectUser(user.user.id, user.hasStore, user.isCourier)" class="btn btn-primary w-100">Edit</a></td>
-                </tr>
-                <tr :class="isSelected(user.user.id) ? '' : 'd-none'">
-                    <th scope="row"></th>
-                    <td v-if="!hasStore"><a href="#" @click.prevent="addStore()" class="btn btn-secondary w-100">Add store</a></td>
-                    <td><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete store</a></td>
-                    <td v-if="!isCourier"><a href="#" @click.prevent="" class="btn btn-secondary w-100">Add courier</a></td>
-                    <td><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete courier</a></td>
-                </tr>
-            </template>
-            </tbody>
-        </table>
-
-    </div>
-</template>
-
 <script>
 export default {
     name: 'Users component',
@@ -94,6 +53,47 @@ export default {
     },
 }
 </script>
+
+<template>
+    <div class="container-md">
+        <h1 class="mb-4 text-light">Users</h1>
+        <div v-if="!users" class="text-light">Loading...</div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Created at</th>
+                <th scope="col">Store</th>
+                <th scope="col">Courier</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="user in users">
+                <tr>
+                    <th scope="row"> {{ user.user.id }}</th>
+                    <td @click.prevent="clearSelect()"> {{ user.user.name }}</td>
+                    <td @click.prevent="clearSelect()"> {{ user.user.email }}</td>
+                    <td @click.prevent="clearSelect()"> {{ user.user.created_at }}</td>
+                    <td @click.prevent="clearSelect()"> {{ user.hasStore }} </td>
+                    <td @click.prevent="clearSelect()"> {{ user.isCourier }} </td>
+                    <td><a href="#" @click.prevent="selectUser(user.user.id, user.hasStore, user.isCourier)" class="btn btn-primary w-100">Edit</a></td>
+                </tr>
+                <tr :class="isSelected(user.user.id) ? '' : 'd-none'">
+                    <th scope="row"></th>
+                    <td v-if="!hasStore"><a href="#" @click.prevent="addStore()" class="btn btn-secondary w-100">Add store</a></td>
+                    <td><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete store</a></td>
+                    <td v-if="!isCourier"><a href="#" @click.prevent="" class="btn btn-secondary w-100">Add courier</a></td>
+                    <td><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete courier</a></td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+
+    </div>
+</template>
 
 <style scoped>
 .blow_text {

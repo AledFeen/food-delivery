@@ -1,13 +1,3 @@
-<template>
-    <div class="w-25">
-        <input v-model="name" type="text" placeholder="name" class="form-control mt-3 mb-3">
-        <input v-model="email" type="email" placeholder="email" class="form-control mt-3 mb-3">
-        <input v-model="password" type="password" placeholder="password" class="form-control mb-3">
-        <input v-model="password_confirmation" type="password" placeholder="password" class="form-control mb-3">
-        <input @click.prevent="register" type="submit" value="registration" class="btn btn-primary">
-    </div>
-</template>
-
 <script>
 export default {
     name: "Registration",
@@ -40,6 +30,16 @@ export default {
     }
 }
 </script>
+
+<template>
+    <div class="w-25">
+        <input v-model="name" type="text" placeholder="name" class="form-control mt-3 mb-3">
+        <input v-model="email" type="email" placeholder="email" class="form-control mt-3 mb-3">
+        <input v-model="password" type="password" placeholder="password" class="form-control mb-3">
+        <input v-model="password_confirmation" type="password" placeholder="password" class="form-control mb-3">
+        <input @click.prevent="register" type="submit" value="registration" class="btn btn-primary">
+    </div>
+</template>
 
 <style scoped>
 

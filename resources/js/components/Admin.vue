@@ -1,8 +1,3 @@
-<template>
-    <div class="text-light">Admin panel</div>
-    <router-link :to="{ name: 'admin.users' }">User list</router-link>
-</template>
-
 <script>
 export default {
     name: "Admin panel",
@@ -27,6 +22,13 @@ export default {
     }
 }
 </script>
+
+<template>
+    <div class="text-light">Admin panel</div>
+    <router-link :to="{ name: 'admin.users' }">User list</router-link>
+</template>
+
+
 
 <style scoped>
 
