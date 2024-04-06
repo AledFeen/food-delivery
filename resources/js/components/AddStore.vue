@@ -9,8 +9,10 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="description" placeholder="" v-model="description">
-            <label for="description">Description</label>
+            <div class="input-group">
+                <span class="input-group-text">Description</span>
+                <textarea v-model="description" class="form-control" aria-label="With textarea"></textarea>
+            </div>
         </div>
 
         <div class="form-floating mb-3">
@@ -79,7 +81,7 @@ export default {
             formData.append('type_store', selectedOption)
             axios.post('/api/admin/users/add', formData)
                 .then(res => {
-                    this.$router.push({ name: 'admin.users' })
+
                 })
                 .catch(error => {
                     console.error('Error fetching store:', error)

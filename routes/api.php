@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourierController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StoreTypeController;
@@ -36,8 +37,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::get('/user/store', [StoreController::class, 'selectUserStore']);
             Route::post('/user/store/updateProfile', [StoreController::class, 'updateStoreProfile']);
             Route::get('/user/store/categories', [CategoryController::class, 'getCategories']);
+            Route::get('/store/category/products', [ProductController::class, 'getProductsByCategoryId']);
             Route::post('/store/add/mainCategory',[CategoryController::class, 'addMainCategory']);
             Route::post('/store/add/subCategory',[CategoryController::class, 'addSubCategory']);
+            Route::post('/store/add/product',[ProductController::class, 'addProduct']);
+            Route::post('/store/update/product',[ProductController::class, 'updateProduct']);
+            Route::get('/store/product/categories', [ProductController::class, 'getProductCategories']);
+            Route::post('/store/product/add/category', [ProductController::class, 'addProductCategory']);
+            Route::post('/store/product/category/add/item', [ProductController::class, 'addItemToCategory']);
+            Route::delete('/store/product/category/delete/item/{data}', [ProductController::class, 'deleteItemFromProductCategory']);
         });
 
         Route::get('user/check/admin', [AdminController::class, 'checkAdminExistence']);

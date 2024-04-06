@@ -6,7 +6,8 @@ export default {
         return {
             store: null,
             types: null,
-            categories: null
+            categories: null,
+            image: null
         }
     },
 
@@ -93,9 +94,10 @@ export default {
         </div>
 
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="description" placeholder="" v-if="store"
-                   v-model="store.description">
-            <label for="description">Description</label>
+            <div v-if="store" class="input-group">
+                <span class="input-group-text">Description</span>
+                <textarea v-model="store.description" class="form-control" aria-label="With textarea"></textarea>
+            </div>
         </div>
 
         <div class="form-floating mb-3">
@@ -117,8 +119,8 @@ export default {
         </div>
 
         <div class="form-floating mb-3 mt-3">
-            <td class="w-25"><img v-if="store" :src="'/storage/images/stores/' + store.image" class="w-50" alt="Image">
-            </td>
+            <div class="w-25"><img v-if="store" :src="'/storage/images/stores/' + store.image" class="w-50" alt="Image">
+            </div>
         </div>
 
         <div class="input-group mb-3">

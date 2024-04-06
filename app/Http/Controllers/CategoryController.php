@@ -11,7 +11,8 @@ use stdClass;
 
 class CategoryController extends Controller
 {
-    public function addMainCategory(Request $request) {
+    public function addMainCategory(Request $request)
+    {
         $user_id = Auth::id();
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
 
@@ -22,14 +23,14 @@ class CategoryController extends Controller
         DB::update('Insert into categories(store_id, path, name) values (?,?,?)', [$storeId, $path, $name]);
     }
 
-    public function addSubCategory(Request $request) {
+    public function addSubCategory(Request $request)
+    {
         $user_id = Auth::id();
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
         $storeId = $store->id;
         $name = $request->input('name');
         $parentId = $request->input('parent');
         $parent = DB::selectOne('select * from categories where id = ? limit 1', [$parentId]);
-        //return response(['parent' => $parentId], 500);
         $path = $parent->path . $parent->id . '/';
         DB::update('Insert into categories(store_id, path, name, parent_id) values (?,?,?,?)', [$storeId, $path, $name, $parentId]);
     }
@@ -43,14 +44,12 @@ class CategoryController extends Controller
         $categories = DB::select('select * from categories where store_id = ?', [$store->id]);
 
         $maxParts = 0;
-
         $filteredCategories = [];
-
-        if(count($categories) > 0) {
+        if (count($categories) > 0) {
             foreach ($categories as $category) {
                 $parts = explode('/', $category->path);
                 $num = count($parts);
-                if($num > $maxParts) {
+                if ($num > $maxParts) {
                     $maxParts = count($parts);
                 }
             }
@@ -64,12 +63,7 @@ class CategoryController extends Controller
                         $item = $category;
                         foreach ($categories as $findCategory) {
                             if ($findCategory->id == $parentId) {
-                                if(property_exists($findCategory, 'childs')) {
-                                    array_push($findCategory->childs, $item);
-                                } else {
-                                    $findCategory->childs = [];
-                                    array_push($findCategory->childs, $item);
-                                }
+                                $findCategory->childs[] = $item;
                             }
                         }
                     }
@@ -79,8 +73,8 @@ class CategoryController extends Controller
             foreach ($categories as $category) {
                 $parts = explode('/', $category->path);
                 $num = count($parts);
-                if($num == 2) {
-                    array_push($filteredCategories, $category);
+                if ($num == 2) {
+                    $filteredCategories[] = $category;
                 }
             }
 
@@ -98,4 +92,7 @@ class CategoryController extends Controller
         return ['categories' => $filteredCategories, 'maxPath' => $maxParts];
     }
 
+    public function deleteCategory() {
+
+    }
 }
