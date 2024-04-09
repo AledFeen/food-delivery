@@ -52,7 +52,7 @@ export default {
         },
 
         getProductsForCategory(categoryId) {
-            axios.get('api/store/category/products', {
+            axios.get('/api/store/category/products', {
                 params: {categoryId: categoryId}
             }).then(res => {
                 this.products = res.data.products

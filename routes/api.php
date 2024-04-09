@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CityController;
 use App\Http\Controllers\CourierController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreCategoryController;
@@ -27,16 +28,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
-    Route::get('categories/get', [StoreCategoryController::class, 'getCategories']);
-    Route::get('types/get', [StoreTypeController::class, 'getTypes']);
+    Route::get('/categories/get', [StoreCategoryController::class, 'getCategories']);
+    Route::get('/types/get', [StoreTypeController::class, 'getTypes']);
+    Route::get('/cities', [CityController::class, 'getCities']);
+    Route::get('/stores', [StoreController::class, 'getStoresByCityId']);
+    Route::get('/store', [StoreController::class, 'getStoreById']);
+    Route::get('/store/categories', [CategoryController::class, 'getCategoriesByStoreId']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
-
         Route::get('user/check/store', [StoreController::class, 'checkStoreExistence']);
         Route::group(['middleware' => 'isStore'], function () {
             Route::get('/user/store', [StoreController::class, 'selectUserStore']);
             Route::post('/user/store/updateProfile', [StoreController::class, 'updateStoreProfile']);
             Route::get('/user/store/categories', [CategoryController::class, 'getCategories']);
+            Route::get('/store/cities', [CityController::class, 'getStoreCitiesList']);
+            Route::delete('/store/city/{id}', [CityController::class, 'deleteCityFromList']);
+            Route::post('/store/add/city', [CityController::class, 'addCityToStore']);
             Route::get('/store/category/products', [ProductController::class, 'getProductsByCategoryId']);
             Route::post('/store/add/mainCategory',[CategoryController::class, 'addMainCategory']);
             Route::post('/store/add/subCategory',[CategoryController::class, 'addSubCategory']);

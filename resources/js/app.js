@@ -11,7 +11,7 @@ import MyStore from "./components/MyStore.vue";
 import Admin from "./components/Admin.vue";
 import Courier from "./components/Courier.vue";
 import Users from "./components/Users.vue";
-import TestComp from "./components/testComp.vue";
+import Store from "./components/Store.vue";
 import AddStore from "./components/AddStore.vue";
 import Categories from "./components/Categories.vue";
 import StoreProfile from "./components/StoreProfile.vue";
@@ -30,10 +30,12 @@ const routes = [
     {path: '/registration', name: 'user.registration', component: Registration},
 
     //store
+    {path: '/store/:storeId', name: 'store', props: true, component: Store},
     {path: '/myStore', name: 'user.store', component: MyStore},
     {path: '/storeProfile', name: 'store.profile', component: StoreProfile},
     {path: '/categories', name: 'store.categories', component: Categories},
     {path: '/panel', name: 'store.panel', component: StorePanel},
+
     //courier
     {path: '/courierPanel', name: 'user.courier', component: Courier},
 
@@ -42,8 +44,8 @@ const routes = [
     {path: '/users', name: 'admin.users', component: Users},
     {path: '/addStore/:userId', name: 'admin.addStore', props: true, component: AddStore},
 
-    //trash
-    {path: '/test', name: 'test', component: TestComp},
+
+
 
 ]
 
@@ -60,7 +62,7 @@ router.beforeEach((to, from, next) => {
 
     ////защитить /myStore от входа по урл
     if (!token) {
-        if (to.name === 'user.login' || to.name === 'user.registration' || to.name === 'home.index') {
+        if (to.name === 'user.login' || to.name === 'user.registration' || to.name === 'home.index' || to.name === 'store') {
             return next();
         } else {
             return next({name: 'user.login'});

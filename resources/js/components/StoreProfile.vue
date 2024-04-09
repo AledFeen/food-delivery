@@ -7,7 +7,9 @@ export default {
             store: null,
             types: null,
             categories: null,
-            image: null
+            image: null,
+            cities: null,
+            storeCities: null
         }
     },
 
@@ -15,6 +17,8 @@ export default {
         this.getTypes()
         this.getStore()
         this.getCategories()
+        this.getCities()
+        this.getStoreCities()
     },
 
     methods: {
@@ -61,7 +65,6 @@ export default {
             selectedOption = selectElement.options[selectElement.selectedIndex].value
             formData.append('store_category', selectedOption)
 
-
             axios.post('/api/user/store/updateProfile', formData)
                 .then(res => {
                     this.getTypes()
@@ -79,6 +82,54 @@ export default {
                 this.image = this.$refs.fileInput.files[0]
             }
         },
+
+        getCities() {
+            axios.get('/api/cities')
+                .then(res => {
+                    this.cities = res.data.cities
+                }).catch(error => {
+                console.error('Error fetching posts:', error)
+            })
+        },
+
+        getStoreCities() {
+            axios.get('/api/store/cities')
+                .then(res => {
+                    this.storeCities = res.data.cities
+                }).catch(error => {
+                console.error('Error fetching posts:', error)
+            })
+        },
+
+        addCity() {
+            var selectElement = document.getElementById("citySelect")
+            var selectedOption = selectElement.options[selectElement.selectedIndex].value
+
+            if (this.storeCities.some(city => city.id === selectedOption)) {
+                window.alert('Це місто вже додано')
+            } else {
+                const formData = new FormData()
+                formData.append('city_id', selectedOption)
+                axios.post('/api/store/add/city', formData)
+                    .then(res => {
+                        this.getStoreCities()
+                    })
+                    .catch(error => {
+                        console.error('Error updating store:', error)
+                        window.alert("Error. Try again.");
+                    })
+            }
+        },
+        deleteCity(id) {
+            axios.delete(`/api/store/city/${id}`)
+                .then(res => {
+                this.getStoreCities()
+                })
+                .catch(error => {
+                    console.error('Error updating store:', error)
+                    window.alert("Error. Try again.");
+                })
+        }
     }
 }
 </script>
@@ -130,6 +181,46 @@ export default {
 
         <input @click.prevent="updateProfile()" type="submit"
                class="w-100 btn btn-lg btn-light btn-outline-dark mb-2 mt-2" value="Оновити"/>
+
+        <h3 class="text-center text-light">Міста</h3>
+
+        <div class="d-flex flex-row">
+            <div class="w-50 me-3">
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="citySelect" aria-label="Floating label select example">
+                        <template v-for="(city, index) in cities">
+                            <option :value="city.id">{{ city.name }}</option>
+                        </template>
+                    </select>
+                    <label for="citySelect">Select category</label>
+                </div>
+                <input @click.prevent="addCity" type="submit" class="w-100 btn btn-lg btn-light btn-outline-dark mb-2 mt-2" value="Додати місто"/>
+            </div>
+            <div class="w-50">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Country</th>
+                        <th scope="col">Button</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <template v-for="city in storeCities">
+                            <tr>
+                                <th scope="row">{{city.country}}</th>
+                                <td>{{city.name}}</td>
+                                <td><input @click.prevent="deleteCity(city.id)" type="submit" class="w-100 btn btn btn-danger btn-outline-dark mb-2 mt-2" value="Видалити"/></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
     </main>
 </template>
 

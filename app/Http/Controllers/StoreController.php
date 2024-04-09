@@ -25,6 +25,19 @@ class StoreController extends Controller
         return ['store' => $store];
     }
 
+    public function getStoreById(Request $request) {
+        $id = $request->query('id');
+        $store = DB::selectOne('select * from stores where id = ? limit 1', [$id]);
+        return ['store' => $store];
+    }
+
+    public function getStoresByCityId(Request $request)
+    {
+        $cityId = $request->query('city_id');
+        $stores = DB::select('select s.* from stores s inner join cities_has_stores chs on s.id = chs.store_id where chs.city_id = ?', [$cityId]);
+        return ['stores' => $stores];
+    }
+
     public function updateStoreProfile(Request $request) {
 
         DB::beginTransaction();
@@ -52,4 +65,5 @@ class StoreController extends Controller
             return response()->json(['message' => 'Произошла ошибка: ' . $e->getMessage()], 500);
         }
     }
+
 }

@@ -35,14 +35,24 @@ class CategoryController extends Controller
         DB::update('Insert into categories(store_id, path, name, parent_id) values (?,?,?,?)', [$storeId, $path, $name, $parentId]);
     }
 
+    public function getCategoriesByStoreId(Request $request) {
+        $storeId = $request->query('store_id');
+        $categories = DB::select('select * from categories where store_id = ?', [$storeId]);
+        $filteredCategories = $this->refactorCategories($categories);
+        return ['categories' => $filteredCategories];
+    }
+
     public function getCategories()
     {
         $user_id = Auth::id();
-
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
-
         $categories = DB::select('select * from categories where store_id = ?', [$store->id]);
+        $filteredCategories = $this->refactorCategories($categories);
+        return ['categories' => $filteredCategories];
+    }
 
+    private function refactorCategories($categories): array
+    {
         $maxParts = 0;
         $filteredCategories = [];
         if (count($categories) > 0) {
@@ -87,9 +97,9 @@ class CategoryController extends Controller
                     $category->forProducts = true;
                 }
             }
-
         }
-        return ['categories' => $filteredCategories, 'maxPath' => $maxParts];
+
+        return $filteredCategories;
     }
 
     public function deleteCategory() {
