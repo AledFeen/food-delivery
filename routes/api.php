@@ -34,9 +34,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/stores', [StoreController::class, 'getStoresByCityId']);
     Route::get('/store', [StoreController::class, 'getStoreById']);
     Route::get('/store/categories', [CategoryController::class, 'getCategoriesByStoreId']);
+    Route::get('/store/category/products', [ProductController::class, 'getProductsByCategoryId']);
+    Route::get('/home/store/product/categories', [ProductController::class, 'getProductCategoriesByStoreId']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::get('user/check/store', [StoreController::class, 'checkStoreExistence']);
+        Route::get('/user/check/store', [StoreController::class, 'checkStoreExistence']);
         Route::group(['middleware' => 'isStore'], function () {
             Route::get('/user/store', [StoreController::class, 'selectUserStore']);
             Route::post('/user/store/updateProfile', [StoreController::class, 'updateStoreProfile']);
@@ -44,7 +46,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::get('/store/cities', [CityController::class, 'getStoreCitiesList']);
             Route::delete('/store/city/{id}', [CityController::class, 'deleteCityFromList']);
             Route::post('/store/add/city', [CityController::class, 'addCityToStore']);
-            Route::get('/store/category/products', [ProductController::class, 'getProductsByCategoryId']);
             Route::post('/store/add/mainCategory',[CategoryController::class, 'addMainCategory']);
             Route::post('/store/add/subCategory',[CategoryController::class, 'addSubCategory']);
             Route::post('/store/add/product',[ProductController::class, 'addProduct']);
@@ -55,14 +56,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::delete('/store/product/category/delete/item/{data}', [ProductController::class, 'deleteItemFromProductCategory']);
         });
 
-        Route::get('user/check/admin', [AdminController::class, 'checkAdminExistence']);
+        Route::get('/user/check/admin', [AdminController::class, 'checkAdminExistence']);
         Route::group(['middleware' => 'isAdmin'], function () {
             Route::get('/user/admin', [AdminController::class, 'selectAdmin']);
             Route::get('/admin/users/get', [AdminController::class, 'getUsers']);
             Route::post('/admin/users/add', [AdminController::class, 'addStore']);
         });
 
-        Route::get('user/check/courier', [CourierController::class, 'checkCourierExistence']);
+        Route::get('/user/check/courier', [CourierController::class, 'checkCourierExistence']);
         Route::group(['middleware' => 'isCourier'], function () {
             Route::get('user/courier', [CourierController::class, 'selectCourier']);
         });

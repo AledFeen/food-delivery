@@ -47,10 +47,21 @@ class ProductController extends Controller
     {
         $user_id = Auth::id();
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
-        $products = DB::select('select p.* from categories c inner join products p on c.id = p.category_id
-            where c.store_id = ?', [$store->id]);
-
         $productId = $request->query('productId');
+
+        return $this->makeProductCategories($store->id, $productId);
+    }
+
+    public function getProductCategoriesByStoreId(Request $request) {
+        $productId = $request->query('productId');
+        $storeId = $request->query('storeId');
+
+        return $this->makeProductCategories($storeId, $productId);
+    }
+
+    private function makeProductCategories($storeId, $productId) {
+        $products = DB::select('select p.* from categories c inner join products p on c.id = p.category_id
+            where c.store_id = ?', [$storeId]);
 
         $productsCategories = DB::select('select pc.* from products p inner join product_categories pc on p.id = pc.product_id where p.id = ?', [$productId]);
 
@@ -77,7 +88,6 @@ class ProductController extends Controller
                 }
             }
         }
-
         return ['productCategories' => $productsCategories, 'storeProducts' => $staticProducts];
     }
 

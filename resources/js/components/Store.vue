@@ -28,13 +28,18 @@ export default {
 
             selectedCategory: null,
             selectedProduct: null,
-            selectedOptions: []
+            selectedOptions: [],
+            selectedCount: 1,
+            totalProductPrice: 0
         }
     },
 
     watch: {
         productCategories(newValue, oldValue) {
             this.makeOptions()
+        },
+        selectedCount(newValue, oldValue) {
+            this.setTotalPrice()
         }
     },
 
@@ -93,13 +98,14 @@ export default {
         },
 
         getProductCategories() {
-            axios.get('/api/store/product/categories', {
-                params: {productId: this.selectedProduct.id}
+            axios.get('/api/home/store/product/categories', {
+                params: {productId: this.selectedProduct.id, storeId: this.storeId}
             })
                 .then(res => {
-                    console.log(res.data)
                     this.productCategories = res.data.productCategories
                     this.storeProducts = res.data.storeProducts
+                    this.selectedCount = 1
+                    this.totalProductPrice = this.selectedProduct.price
                 }).catch(error => {
                 console.error('Error fetching store:', error)
                 window.alert("Error. Try again.");
@@ -157,12 +163,112 @@ export default {
                             el.obj = product
                         }
                     } else {
-
+                        let isNext = true;
+                        for (let i = 0; i < el.objs.length; i++) {
+                            const item = el.objs[i];
+                            if (isNext === true) {
+                                if (item === null) {
+                                    const element = document.getElementById('option_' + category.name + '_' + product.name)
+                                    element.classList.remove("text-light")
+                                    el.objs[i] = product;
+                                    isNext = false;
+                                } else if (item.name === product.name) {
+                                    const element = document.getElementById('option_' + el.category + '_' + item.name)
+                                    element.classList.add("text-light")
+                                    el.objs[i] = null;
+                                    isNext = false;
+                                }
+                            }
+                        }
                     }
                 }
             })
+        },
+
+        clearClass() {
+            try {
+                if (this.selectedOptions.length > 0)  {
+                    this.selectedOptions.forEach(el => {
+                        if(el.obj) {
+                            const element = document.getElementById('option_' + el.category + '_' + el.obj.name)
+                            element.classList.add("text-light")
+                        } else if (el.objs) {
+                            el.objs.forEach(item => {
+                                if(el != null) {
+                                    const element = document.getElementById('option_' + el.category + '_' + item.name)
+                                    element.classList.add("text-light")
+                                }
+                            })
+                        }
+                    })
+                }
+            } catch (e) {}
+        },
+
+        plusCount() {
+            this.selectedCount++
+        },
+
+        minusCount() {
+            if(this.selectedCount > 1) {
+                this.selectedCount--
+            }
+        },
+
+        setTotalPrice() {
+          this.totalProductPrice = this.selectedProduct.price * this.selectedCount
+        },
+
+        addItemToBasket() {
+            let isTrue = true
+
+            if (this.selectedOptions.length > 0)  {
+                this.selectedOptions.forEach(el => {
+                    if(el.obj === null) {
+                        isTrue = false
+                    } else if (el.objs) {
+                        el.objs.forEach(item => {
+                            if(item === null) {
+                                isTrue = false
+                            }
+                        })
+                    }
+                })
+
+                if(isTrue) {
+                    let item = {
+                        product: this.selectedProduct,
+                        options: this.selectedOptions,
+                        count: this.selectedCount,
+                        price: this.totalProductPrice
+                    }
+                    this.basket.push(item)
+                } else {
+                    window.alert("Ви не обрали потрібні опції");
+                }
+            } else {
+                let item = {
+                    product: this.selectedProduct,
+                    options: this.selectedOptions,
+                    count: this.selectedCount,
+                    price: this.totalProductPrice
+                }
+                this.basket.push(item)
+            }
+        },
+
+        deleteItemFromBasket(item) {
+            let indexToRemove = this.basket.findIndex(element => {
+                return element === item
+            });
+
+            if (indexToRemove !== -1) {
+                this.basket.splice(indexToRemove, 1);
+            }
         }
-    },
+
+
+    }
 }
 </script>
 
@@ -172,8 +278,8 @@ export default {
             <div class="d-flex flex-column align-self-center">
                 <template v-for="category in categories" :key="category.id">
                     <template v-if="category.childs">
-                        <div class="sidebar-item p-2 w-100 d-flex flex-row justify-content-between">
-                            <div class="w-75" @click.prevent="clickItem(category)">
+                        <div class="sidebar-item-no-hover p-2 w-100 d-flex flex-row justify-content-between">
+                            <div class="w-75">
                                 <div class="text-light">{{ category.name }}</div>
                             </div>
                             <div class="btn btn-light" @click.prevent="toggleChildVisibility(category.id)"></div>
@@ -216,9 +322,30 @@ export default {
         </div>
         <div class="w-25">
             <div class="h-100 bg-light">
-                <template v-if="basket.length > 0" v-for="item in basket">
-
-                </template>
+                <div class="d-flex flex-column text-center">
+                    <template v-if="basket.length > 0" v-for="(item, index) in basket">
+                        <div class="d-flex flex-column mt-1 mb-1">
+                            <h5>Продукт {{ index + 1}}</h5>
+                            <div>Назва: {{item.product.name}}</div>
+                            <div>Обрані опції:</div>
+                            <template v-for="opt in item.options">
+                                <template v-if="opt.obj">
+                                    <div> {{ opt.category + ':' + opt.obj.name }} </div>
+                                </template>
+                                <template v-if = "opt.objs">
+                                    <div> {{ opt.category + ': ' }}
+                                    <template v-for="o in opt.objs">
+                                        {{ o.name }}
+                                    </template>
+                                    </div>
+                                </template>
+                            </template>
+                            <div>Кількість: {{item.count}}</div>
+                            <div>Ціна: {{item.price}}</div>
+                        </div>
+                        <div @click.prevent="deleteItemFromBasket(item)" class="btn btn-danger ms-5 me-5">Видалити</div>
+                    </template>
+                </div>
             </div>
         </div>
     </main>
@@ -229,7 +356,7 @@ export default {
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Add product</h1>
-                    <button id="btnCloseProduct" type="button" class="btn-close" data-bs-dismiss="modal"
+                    <button @click.prevent="clearClass" id="btnCloseProduct" type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -244,8 +371,8 @@ export default {
                                                 <div>Оберіть один товар з категорії</div>
                                             </template>
                                             <template v-else-if="category.type === 'Multi'">
-                                                <div>Ви можете обрати декілька додаткових позицій</div>
-                                                <div>Максимум: {{ category.count }}</div>
+                                                <div>Оберіть декілька опцій</div>
+                                                <div>К-сть: {{ category.count }}</div>
                                             </template>
                                         </div>
                                         <template v-for="product in category.items">
@@ -263,6 +390,13 @@ export default {
                                      class="mw-100 mh-100">
                                 <div>{{ selectedProduct.name }}</div>
                                 <div>Ціна: {{ selectedProduct.price }}</div>
+                                <div class="d-flex flex-row justify-content-center">
+                                    <div class="btn btn-dark" @click.prevent="minusCount">-</div>
+                                    <div class="ms-3 me-3 pt-2">{{selectedCount}}</div>
+                                    <div class="btn btn-dark" @click.prevent="plusCount">+</div>
+                                </div>
+                                <div class="text-center mt-1">Загалом: {{this.totalProductPrice}}</div>
+                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Додати в кошик</div>
                             </div>
                         </div>
                         <div v-else class="w-100">
@@ -271,7 +405,13 @@ export default {
                                      class="mw-100 mh-100">
                                 <div>{{ selectedProduct.name }}</div>
                                 <div>Ціна: {{ selectedProduct.price }}</div>
-
+                                <div class="d-flex flex-row justify-content-center">
+                                    <div class="btn btn-dark" @click.prevent="minusCount">-</div>
+                                    <div class="ms-3 me-3 pt-2">{{selectedCount}}</div>
+                                    <div class="btn btn-dark" @click.prevent="plusCount">+</div>
+                                </div>
+                                <div class="text-center mt-1">Загалом: {{this.totalProductPrice}}</div>
+                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Додати в кошик</div>
                             </div>
                         </div>
                     </div>
@@ -287,6 +427,10 @@ export default {
 
 <style scoped>
 .sidebar-item {
+    background-color: lightgray;
+}
+
+.sidebar-item-no-hover {
     background-color: lightgray;
 }
 
