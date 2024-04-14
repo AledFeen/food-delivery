@@ -30,7 +30,10 @@ export default {
             selectedProduct: null,
             selectedOptions: [],
             selectedCount: 1,
-            totalProductPrice: 0
+            totalProductPrice: 0,
+
+            email: null,
+            password: null
         }
     },
 
@@ -265,6 +268,16 @@ export default {
             if (indexToRemove !== -1) {
                 this.basket.splice(indexToRemove, 1);
             }
+        },
+
+        clickCheckout() {
+            if (localStorage.getItem('x-xsrf-token')) {
+                localStorage.setItem('basket', JSON.stringify(this.basket))
+                localStorage.setItem('basketStore', this.storeId)
+                this.$router.push({name: 'checkout'})
+            } else {
+                this.$router.push({name: 'user.login'})
+            }
         }
 
 
@@ -274,6 +287,8 @@ export default {
 
 <template>
     <main class="d-flex flex-row mt-3">
+
+        <!-- Categories -->
         <div class="w-25">
             <div class="d-flex flex-column align-self-center">
                 <template v-for="category in categories" :key="category.id">
@@ -303,10 +318,10 @@ export default {
             </div>
         </div>
 
+        <!-- Products -->
         <div v-if="selectedCategory" class="w-50 ms-3">
             <a id="openModalProduct" href="#" class="d-none" data-bs-target="#ModalToggleProduct"
-               data-bs-toggle="modal">Add
-                product</a>
+               data-bs-toggle="modal">Add product</a>
             <div class="d-flex flex-column mt-3">
                 <template v-if="!selectedCategory.childs && products">
                     <div class="d-flex flex-row flex-wrap">
@@ -320,6 +335,8 @@ export default {
                 </template>
             </div>
         </div>
+
+        <!-- Basket -->
         <div class="w-25">
             <div class="h-100 bg-light">
                 <div class="d-flex flex-column text-center">
@@ -345,10 +362,17 @@ export default {
                         </div>
                         <div @click.prevent="deleteItemFromBasket(item)" class="btn btn-danger ms-5 me-5">Видалити</div>
                     </template>
+
+                    <template v-if="basket.length > 0">
+                        <div @click.prevent="clickCheckout" class="btn btn-primary ms-5 me-5 mt-3 mb-3">Оформити</div>
+                    </template>
                 </div>
             </div>
         </div>
     </main>
+
+
+    <!-- Modal select product -->
 
     <div class="modal fade" id="ModalToggleProduct" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
          tabindex="-1">
@@ -417,11 +441,11 @@ export default {
                     </div>
                 </div>
                 <div class="modal-footer">
-
                 </div>
             </div>
         </div>
     </div>
+
 
 </template>
 

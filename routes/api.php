@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CourierController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreController;
@@ -38,6 +39,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/home/store/product/categories', [ProductController::class, 'getProductCategoriesByStoreId']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
+
+        Route::post('/checkout', [OrderController::class, 'checkout']);
+
         Route::get('/user/check/store', [StoreController::class, 'checkStoreExistence']);
         Route::group(['middleware' => 'isStore'], function () {
             Route::get('/user/store', [StoreController::class, 'selectUserStore']);

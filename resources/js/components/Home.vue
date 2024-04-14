@@ -94,6 +94,7 @@ export default {
         },
 
         selectStore(id) {
+            localStorage.setItem('basketCity', this.selectedCity.id)
             this.$router.push({ name: 'store', params: { storeId: id } });
         }
     }
@@ -101,9 +102,8 @@ export default {
 </script>
 
 <template>
-    <div class="text-light">Home comp</div>
     <template v-if="!selectedCity">
-        <h3 class="text-light text-center">Оберіть ваше місто</h3>
+        <h3 class="text-light text-center mt-3">Оберіть ваше місто</h3>
         <div class="d-flex flex-row justify-content-center">
             <select v-model="selectedCity" class="form-select w-25" id="citySelect" aria-label="Floating label select example">
                 <option :value="null"></option>
