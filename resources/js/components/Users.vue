@@ -79,7 +79,7 @@ export default {
                     <td @click.prevent="clearSelect()"> {{ user.user.created_at }}</td>
                     <td @click.prevent="clearSelect()"> {{ user.hasStore }} </td>
                     <td @click.prevent="clearSelect()"> {{ user.isCourier }} </td>
-                    <td><a href="#" @click.prevent="selectUser(user.user.id, user.hasStore, user.isCourier)" class="btn btn-primary w-100">Edit</a></td>
+                    <td><a href="#" @click.prevent="selectUser(user.user.id, user.hasStore, user.isCourier)" class="btn btn-dark w-100">Edit</a></td>
                 </tr>
                 <tr :class="isSelected(user.user.id) ? '' : 'd-none'">
                     <th scope="row"></th>

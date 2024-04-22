@@ -135,9 +135,9 @@ export default {
 </script>
 
 <template>
-    <main v-if="store" class="align-self-center">
+    <main v-if="store" class="align-self-center mt-4 mb-4">
 
-        <h1 class="text-light mt-3">Редагувати профіль магазину</h1>
+        <h1 class="text-dark mt-3">Редагувати профіль магазину</h1>
 
         <div class="form-floating mb-3 mt-3">
             <input type="text" class="form-control" id="name" placeholder="" v-if="store" v-model="store.name">
@@ -218,9 +218,6 @@ export default {
                 </table>
             </div>
         </div>
-
-
-
     </main>
 </template>
 

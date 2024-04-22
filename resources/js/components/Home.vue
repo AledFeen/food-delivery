@@ -68,23 +68,20 @@ export default {
 
             if(this.selectedFilter) {
                 const element = document.getElementById(this.selectedFilter)
-                element.classList.remove("bg-dark")
-                element.classList.add("bg-black")
+                element.classList.remove("bg-primary")
             }
 
             let filteredShops = [];
             if (number === 0) {
                 filteredShops = this.allStores.filter(store => store.type_store === filter.name)
                 const element = document.getElementById("filter_type_" + filter.name)
-                element.classList.remove("bg-black")
-                element.classList.add("bg-dark")
+                element.classList.add("bg-primary")
                 this.selectedFilter = "filter_type_" + filter.name
                 this.stores = filteredShops
             } else if (number === 1) {
                 filteredShops = this.allStores.filter(store => store.category === filter.name)
                 const element = document.getElementById("filter_category_" + filter.name)
-                element.classList.remove("bg-black")
-                element.classList.add("bg-dark")
+                element.classList.add("bg-primary")
                 this.selectedFilter = "filter_category_" + filter.name
                 this.stores = filteredShops
             } else {
@@ -103,7 +100,7 @@ export default {
 
 <template>
     <template v-if="!selectedCity">
-        <h3 class="text-light text-center mt-3">Оберіть ваше місто</h3>
+        <h3 class="text-dark text-center mt-3">Оберіть ваше місто</h3>
         <div class="d-flex flex-row justify-content-center">
             <select v-model="selectedCity" class="form-select w-25" id="citySelect" aria-label="Floating label select example">
                 <option :value="null"></option>
@@ -114,27 +111,29 @@ export default {
         </div>
     </template>
     <template v-else>
-        <div class="text-light text-center">Ви обрали місто
-            <a id="openModalCategory" href="#" class="text-light" data-bs-target="#ModalToggleCity" data-bs-toggle="modal">{{selectedCity.name}}</a>
+        <div class="text-dark text-center mt-2">Ви обрали місто
+            <a id="openModalCategory" href="#" class="text-dark" data-bs-target="#ModalToggleCity" data-bs-toggle="modal">{{selectedCity.name}}</a>
         </div>
     </template>
 
     <template v-if="stores">
         <div class="d-flex flex-row">
             <div class="w-25">
-                <div class="d-flex flex-column">
-                    <div :id="'clear_filter'" @click.prevent="selectFilter(15,null)" class="text-light mb-3 bg-black w-75">Очистити</div>
+                <div class="d-flex flex-column text-center">
+                    <div :id="'clear_filter'" @click.prevent="selectFilter(15,null)" class="btn btn-danger mb-3 w-75">Очистити</div>
                     <template v-if="types">
-                        <h4 class=text-light>Тип закладу</h4>
+                        <h4 class="text-dark text-start">Тип закладу</h4>
                             <template v-for="type in types">
-                                <div :id="'filter_type_' + type.name" @click.prevent="selectFilter(0,type)" class="text-light mb-3 bg-black w-75">{{type.name}}</div>
+                                <div :id="'filter_type_' + type.name" @click.prevent="selectFilter(0,type)" class="text-dark p-1 m-1 w-75 rounded-1">{{type.name}}</div>
+                                <div class="border border-1 border-bottom w-75"></div>
                             </template>
                     </template>
                     <template v-if="categories">
-                        <h4 class=text-light>Категорія</h4>
+                        <h4 class="text-dark text-start">Категорія</h4>
                         <div class="d-flex flex-column">
                             <template v-for="category in categories">
-                                <div :id="'filter_category_' + category.name" @click.prevent="selectFilter(1,category)" class="text-light mb-3 bg-black w-75">{{category.name}}</div>
+                                <div :id="'filter_category_' + category.name" @click.prevent="selectFilter(1,category)" class="text-dark p-1 m-1 w-75 rounded-1">{{category.name}}</div>
+                                <div class="border border-1 border-bottom w-75"></div>
                             </template>
                         </div>
                     </template>
@@ -142,9 +141,12 @@ export default {
             </div>
             <div class="w-75 mt-3 d-flex flex-row flex-wrap">
                 <template v-for="store in stores">
-                    <div @click.prevent="selectStore(store.id)" class="col-4 d-flex flex-column ms-1 me-1">
-                        <img :src="'/storage/images/stores/' + store.image" class="w-100 h-75   " alt="Image">
-                        <div class="mt-2 text-center text-light">{{store.name}}</div>
+                    <div class="col-4 d-flex flex-column ms-1 me-1 rounded-3 border border-1">
+                        <div class="image-container rounded-3 h-75">
+                            <img :src="'/storage/images/stores/' + store.image" class="w-100 rounded-3 img" alt="Image">
+                            <div @click.prevent="selectStore(store.id)" class="overlay"></div>
+                        </div>
+                        <h5 class="pt-2 text-center text-dark">{{store.name}}</h5>
                     </div>
                 </template>
             </div>
@@ -177,5 +179,29 @@ export default {
 </template>
 
 <style scoped>
+    .image-container {
+        position: relative;
+    }
+
+    .img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Сохраняет пропорции изображения, заполняя контейнер */
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0); /* Прозрачный цвет слоя */
+        transition: background-color 0.3s ease; /* Плавный переход цвета фона */
+        border-radius: 6px;
+    }
+
+    .overlay:hover {
+        background-color: rgba(0, 0, 0, 0.5); /* Затемненный цвет слоя при наведении */
+    }
 
 </style>

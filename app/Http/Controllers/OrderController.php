@@ -20,7 +20,7 @@ class OrderController extends Controller
         $address = $request->input('address');
         $user = Auth::id();
         $dateTime = new DateTime();
-        $date = $dateTime->format('Y-m-d');
+        $date = $dateTime->format('Y-m-d H:i:s');
         $price = 0;
         foreach ($basket as $item) {
             $price += $item['price'];
@@ -38,13 +38,13 @@ class OrderController extends Controller
             foreach ($basket as $item) {
                 $product = $item['product'];
                 DB::insert('insert into selected_products(orders_id, name, price, count) values (?,?,?,?)', [$lastId, $product['name'], $product['price'], $item['count']]);
-                $lastId = DB::getPdo()->lastInsertId();
+                $lastPrId = DB::getPdo()->lastInsertId();
                 foreach ($item['options'] as $option) {
                     if(isset($option['obj'])) {
-                        DB::insert('insert into selected_options(selected_product_id, name, price) values (?,?,?)', [$lastId, $option['obj']['name'], $option['obj']['price']]);
+                        DB::insert('insert into selected_options(selected_product_id, name, price) values (?,?,?)', [$lastPrId, $option['obj']['name'], $option['obj']['price']]);
                     } else {
                         foreach ($option['objs'] as $obj) {
-                            DB::insert('insert into selected_options(selected_product_id, name, price) values (?,?,?)', [$lastId, $obj['name'], $obj['price']]);
+                            DB::insert('insert into selected_options(selected_product_id, name, price) values (?,?,?)', [$lastPrId, $obj['name'], $obj['price']]);
                         }
                     }
                 }
