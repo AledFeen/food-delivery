@@ -124,15 +124,15 @@ export default {
                     <template v-if="types">
                         <h4 class="text-dark text-start">Тип закладу</h4>
                             <template v-for="type in types">
-                                <div :id="'filter_type_' + type.name" @click.prevent="selectFilter(0,type)" class="text-dark p-1 m-1 w-75 rounded-1">{{type.name}}</div>
+                                <div :id="'filter_type_' + type.name" @click.prevent="selectFilter(0,type)" class="filter text-dark p-1 m-1 w-75 rounded-1">{{type.name}}</div>
                                 <div class="border border-1 border-bottom w-75"></div>
                             </template>
                     </template>
                     <template v-if="categories">
-                        <h4 class="text-dark text-start">Категорія</h4>
+                        <h4 class="text-dark text-start mt-3">Категорія</h4>
                         <div class="d-flex flex-column">
                             <template v-for="category in categories">
-                                <div :id="'filter_category_' + category.name" @click.prevent="selectFilter(1,category)" class="text-dark p-1 m-1 w-75 rounded-1">{{category.name}}</div>
+                                <div :id="'filter_category_' + category.name" @click.prevent="selectFilter(1,category)" class="filter text-dark p-1 m-1 w-75 rounded-1">{{category.name}}</div>
                                 <div class="border border-1 border-bottom w-75"></div>
                             </template>
                         </div>
@@ -200,8 +200,20 @@ export default {
         border-radius: 6px;
     }
 
+    .filter {
+        background-color: rgba(0, 0, 0, 0);
+        transition: background-color 0.3s ease;
+    }
+
     .overlay:hover {
         background-color: rgba(0, 0, 0, 0.5); /* Затемненный цвет слоя при наведении */
     }
+
+    .filter:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+
+
 
 </style>
