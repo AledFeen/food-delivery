@@ -32,7 +32,7 @@ export default {
 </script>
 
 <template>
-    <div class="w-25">
+    <div class="w-25 mx-auto mt-5 mb-5">
         <input v-model="name" type="text" placeholder="name" class="form-control mt-3 mb-3">
         <input v-model="email" type="email" placeholder="email" class="form-control mt-3 mb-3">
         <input v-model="password" type="password" placeholder="password" class="form-control mb-3">

@@ -111,6 +111,15 @@ export default {
         },
 
         toggleChildVisibility(id) {
+            const btn = document.getElementById('btn_category' + id);
+            if (btn.alt === "btn_open") {
+                btn.alt = 'btn_close'
+                btn.style.transform = 'rotate(-90deg)';
+            } else {
+                btn.alt = 'btn_open'
+                btn.style.transform = 'rotate(0deg)';
+            }
+
             const childsBlock = document.getElementById('childs_' + id);
             if (childsBlock.classList.contains('d-none')) {
                 childsBlock.classList.remove('d-none');
@@ -280,29 +289,37 @@ export default {
 
         <div class="w-25">
             <div class="d-flex flex-column align-self-center">
-                <a href="#" @click.prevent="openAddMainCategory" class="btn btn-primary w-100 mb-2">Add category</a>
+                <a href="#" @click.prevent="openAddMainCategory" class="btn btn-secondary w-100 mt-3 mb-2">Add category</a>
                 <template v-for="category in categories" :key="category.id">
                     <template v-if="category.childs">
                         <div class="sidebar-item p-2 w-100 d-flex flex-row justify-content-between">
                             <div class="w-75" @click.prevent="clickItem(category)">
-                                <div class="text-light">{{ category.name }}</div>
+                                <div class="text-dark">{{ category.name }}</div>
+
                             </div>
-                            <div class="btn btn-light" @click.prevent="toggleChildVisibility(category.id)"></div>
+                            <img :src="'/storage/images/static/arrow_left.png'" width="12px" height="12px" class="mt-1"
+                                 :id="'btn_category' + category.id" @click.prevent="toggleChildVisibility(category.id)"
+                                 alt="btn_open">
                         </div>
+                        <div class="border border-1 border-bottom w-100"></div>
                         <div :id="'childs_' + category.id" class="d-none">
                             <template v-for="child in category.childs" :key="child.id">
                                 <div class="sidebar-sub-item p-2 w-100 d-flex flex-row justify-content-between"
                                      @click.prevent="clickItem(child)">
-                                    <div class="text-light">{{ child.name }}</div>
+                                    <div class="text-dark">{{ child.name }}</div>
+
                                 </div>
+                                <div class="border border-1 border-bottom w-100"></div>
                             </template>
                         </div>
                     </template>
                     <template v-else>
                         <div class="sidebar-item p-2 w-100 d-flex flex-row justify-content-between"
                              @click.prevent="clickItem(category)">
-                            <div class="text-light">{{ category.name }}</div>
+                            <div class="text-dark">{{ category.name }}</div>
+
                         </div>
+                        <div class="border border-1 border-bottom w-100"></div>
                     </template>
                 </template>
             </div>
@@ -310,24 +327,39 @@ export default {
 
         <div v-if="selectedCategory" class="w-75 ms-3">
             <div class="d-flex flex-column mt-3">
-                <template v-if="!selectedCategory.childs && products">
-                    <div class="text-light">Have products</div>
-                    <div class="d-flex flex-row flex-wrap">
-                        <template v-for="product in products">
-                            <div class="d-block w-25 bg-light ms-3 me-3 mb-3"
-                                 @click.prevent="opedEditProductModal(product)">
-                                <div>{{ product.name }}</div>
+                <h3 class="text-center mt-3">{{ selectedCategory.name }}</h3>
+                <a v-if="(selectedCategory.childs) || (selectedCategory.path === '/' && !products)" href="#"
+                   @click.prevent="selectCategoryForAddCategory(selectedCategory.id)"
+                   class="btn btn-secondary w-100 mt-2 mb-2">Add category</a>
+                <a v-if="selectedCategory && selectedCategory.forProducts" href="#"
+                   @click.prevent="selectCategoryForAddProduct(selectedCategory.id)" class="btn mt-2 mb-2 btn-secondary w-100">Add
+                    product</a>
+                <template v-if="selectedCategory" class="ms-3">
+                    <a id="openModalProduct" href="#" class="d-none" data-bs-target="#ModalToggleProduct"
+                       data-bs-toggle="modal">Add product</a>
+
+                    <div class="d-flex flex-column mt-3">
+                        <template v-if="!selectedCategory.childs && products">
+                            <div class="d-flex flex-row flex-wrap mb-5">
+                                <template v-for="product in products">
+                                    <div class="d-flex flex-column col-md-2 ps-3 pe-3 mb-3 pt-3 rounded-3 point" style="max-height: 400px"
+                                         @click.prevent="opedEditProductModal(product)">
+                                        <div class="h-75 d-block">
+                                            <img :src="'/storage/images/products/' + product.imagePath" width="100%"
+                                                 height="100%" class="img rounded-3 card-img-top" alt="Image">
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mt-2 card-title">{{ product.name }}</div>
+                                            <div class="fw-bold card-subtitle">{{ product.price }}</div>
+                                            <div class="card-subtitle">delivery price</div>
+                                        </div>
+                                        <div class="overlay"></div>
+                                    </div>
+                                </template>
                             </div>
                         </template>
                     </div>
                 </template>
-                <h3 class="m-3 text-light text-center">{{ selectedCategory.name }}</h3>>
-                <a v-if="(selectedCategory.childs) || (selectedCategory.path === '/' && !products)" href="#"
-                   @click.prevent="selectCategoryForAddCategory(selectedCategory.id)"
-                   class="btn btn-primary w-100 mb-2">Add category</a>
-                <a v-if="selectedCategory && selectedCategory.forProducts" href="#"
-                   @click.prevent="selectCategoryForAddProduct(selectedCategory.id)" class="btn btn-primary w-100">Add
-                    product</a>
 
             </div>
         </div>
@@ -345,10 +377,6 @@ export default {
                                 aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <template v-if="selectedCategory">
-                            <div> Parent id: {{ selectedCategory }}</div>
-                        </template>
-
                         <main class="align-self-center">
                             <div class="form-floating mb-3 mt-3">
                                 <input type="text" class="form-control" id="name" placeholder="" v-model="name">
@@ -477,12 +505,14 @@ export default {
                                         Add category
                                     </button>
                                     <template v-for="category in productCategories">
-                                        <div class="sidebar-item mb-1 text-light"
+                                        <div class="sidebar-item mb-1 text-dark"
                                              @click.prevent="selectProductCategory(category)"> {{ category.name }}
+                                            <div class="border border-3 border-bottom w-100"></div>
                                         </div>
                                         <template v-for="product in category.items">
-                                            <div class="sidebar-sub-item mb-1 text-light"
+                                            <div class="sidebar-sub-item mb-1 text-dark"
                                                  @click.prevent="selectProductCategoryItem(product)"> {{ product.name }}
+                                                <div class="border border-1 border-bottom w-100"></div>
                                             </div>
                                         </template>
                                     </template>
@@ -526,17 +556,17 @@ export default {
                                     </button>
                                 </template>
                                 <template v-else-if="whatProductSelected === 'item'">
-                                    <button class="btn btn-danger w-100 mb-3"
-                                            @click.prevent="deleteItemFromProductCategory">Delete
-                                    </button>
+                                    <div class="me-3 mb-3">
+                                        <img :src="'/storage/images/products/' + selectedProductItem.imagePath"
+                                             alt="Image"
+                                             class="img" style="max-height: 450px">
+                                    </div>
                                     <div class="mb-2">{{ selectedProductItem.name }}</div>
                                     <div class="mb-2">{{ selectedProductItem.description }}</div>
                                     <div class="mb-2">{{ selectedProductItem.price }}</div>
-                                    <div class="w-100 me-3 mb-3">
-                                        <img :src="'/storage/images/products/' + selectedProductItem.imagePath"
-                                             alt="Image"
-                                             class="mw-100 mh-100">
-                                    </div>
+                                    <button class="btn btn-danger w-100 mb-3"
+                                            @click.prevent="deleteItemFromProductCategory">Delete
+                                    </button>
                                 </template>
                             </div>
                         </div>
@@ -551,20 +581,52 @@ export default {
 
 <style scoped>
 .sidebar-item {
-    background-color: lightgray;
+    background-color: rgba(0, 0, 0, 0); /* Прозрачный цвет слоя */
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-item-no-hover {
+
+}
+
+.img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .sidebar-sub-item {
-    background-color: lightblue;
+    background-color: rgba(0, 0, 0, 0); /* Прозрачный цвет слоя */
+    transition: background-color 0.3s ease;
 }
 
 .sidebar-item:hover {
-    background-color: #e2e2e2; /* Изменение фона при наведении */
+    background-color: rgba(0, 0, 0, 0.1);
     cursor: pointer; /* Изменение типа курсора */
 }
 
 .sidebar-sub-item:hover {
-    background-color: #e2e2e2; /* Изменение фона при наведении */
+    background-color: rgba(0, 0, 0, 0.1);
     cursor: pointer; /* Изменение типа курсора */
+}
+
+.point {
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0); /* Прозрачный цвет слоя */
+    transition: background-color 0.3s ease; /* Плавный переход цвета фона */
+    border-radius: 6px;
+}
+
+.overlay:hover {
+    background-color: rgba(0, 0, 0, 0.5); /* Затемненный цвет слоя при наведении */
 }
 </style>

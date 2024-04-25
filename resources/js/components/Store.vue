@@ -364,8 +364,10 @@ export default {
                                 <div class="d-flex flex-column col-md-4 ps-3 pe-3 mb-3 pt-3 rounded-3 point"
                                      @click.prevent="opedProductModal(product)">
 
-                                    <img :src="'/storage/images/products/' + product.imagePath" width="100%"
-                                         height="50%" class="rounded-3 card-img-top" alt="Image">
+                                    <div class="h-75 d-block">
+                                        <img :src="'/storage/images/products/' + product.imagePath" width="100%"
+                                             height="100%" class="img rounded-3 card-img-top" alt="Image">
+                                    </div>
                                     <div class="card-body">
                                         <div class="mt-2 card-title">{{ product.name }}</div>
                                         <div class="fw-bold card-subtitle">{{ product.price }}</div>
@@ -538,5 +540,12 @@ export default {
 
 .overlay:hover {
     background-color: rgba(0, 0, 0, 0.5); /* Затемненный цвет слоя при наведении */
+}
+
+.img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 </style>
