@@ -92,6 +92,7 @@ export default {
 
         selectStore(id) {
             localStorage.setItem('basketCity', this.selectedCity.id)
+            localStorage.setItem('deliveryPrice', this.selectedCity.price)
             this.$router.push({ name: 'store', params: { storeId: id } });
         }
     }

@@ -31,11 +31,13 @@ export default {
 
     mounted() {
         this.getCategories()
-        this.setDefaultSelectedCategory()
+        //this.setDefaultSelectedCategory()
     },
 
-    updated() {
-        this.setDefaultSelectedCategory()
+    watch: {
+        $categories(newValue, oldValue) {
+            this.setDefaultSelectedCategory()
+        }
     },
 
     methods: {
@@ -62,13 +64,13 @@ export default {
             })
         },
 
-        selectCategoryForAddCategory(id) {
+        selectCategoryForAddCategory() {
             this.isMainAdded = false
             const modalOpenButton = document.getElementById('openModalCategory');
             modalOpenButton.click();
         },
 
-        selectCategoryForAddProduct(id) {
+        selectCategoryForAddProduct() {
             const modalOpenButton = document.getElementById('openModalProduct');
             modalOpenButton.click();
         },
@@ -83,7 +85,7 @@ export default {
             console.log('main')
             const formData = new FormData()
             formData.append('name', this.name)
-            axios.post('/api/store/add/mainCategory', formData).then(res => {
+            axios.post('/api/store/add/mainCategory', formData).then(() => {
                 this.getCategories()
                 const closeBtn = document.getElementById('btnCloseCategory');
                 closeBtn.click();
@@ -98,7 +100,7 @@ export default {
             formData.append('name', this.name)
             formData.append('parent', this.selectedCategory.id)
 
-            axios.post('/api/store/add/subCategory', formData).then(res => {
+            axios.post('/api/store/add/subCategory', formData).then(() => {
                 this.getCategories()
                 const closeBtn = document.getElementById('btnCloseCategory');
                 closeBtn.click();
@@ -172,7 +174,7 @@ export default {
             formData.append('category_id', this.selectedCategory.id)
 
             axios.post('/api/store/update/product', formData)
-                .then(res => {
+                .then(() => {
                     this.getCategories()
                 })
                 .catch(error => {
@@ -211,9 +213,10 @@ export default {
             this.selectedProductCategory = category
         },
 
-        selectProductCategoryItem(product) {
+        selectProductCategoryItem(product, category) {
             this.whatProductSelected = 'item'
             this.selectedProductItem = product
+            this.selectedProductCategory = category
         },
 
         addProductCategory() {
@@ -229,7 +232,7 @@ export default {
                 formData.append('name', name.value)
                 formData.append('count', count.value)
                 formData.append('productId', this.selectedProduct.id)
-                axios.post('/api/store/product/add/category', formData).then(res => {
+                axios.post('/api/store/product/add/category', formData).then(() => {
                     this.getProductCategories()
                 }).catch(error => {
                     console.error('Error fetching store:', error)
@@ -245,7 +248,7 @@ export default {
             formData.append('productId', selectedOption)
             formData.append('categoryId', this.selectedProductCategory.id)
             formData.append('parentId', this.selectedProduct.id)
-            axios.post('/api/store/product/category/add/item', formData).then(res => {
+            axios.post('/api/store/product/category/add/item', formData).then(() => {
                 this.getProductCategories()
             }).catch(error => {
                 console.error('Error fetching store:', error)
@@ -259,20 +262,71 @@ export default {
                 item: this.selectedProductItem.id,
                 parent: this.selectedProduct.id
             }
-            axios.delete(`/api/store/product/category/delete/item/${data}`)
-                .then(response => {
+            axios.delete(`/api/store/product/category/delete/item`, {data})
+                .then(() => {
+                    this.whatProductSelected = 'category'
+                    this.selectedProductCategory = this.selectedProductCategory
                     this.getProductCategories()
                 })
                 .catch(error => {
-                    console.error('Error fetching posts:', error)
+                    console.error('Error deleting product:', error)
                 })
         },
 
         deleteCategoryFromProduct() {
-
+            const data = {
+                category: this.selectedProductCategory.id,
+                parent: this.selectedProduct.id
+            }
+            axios.delete(`/api/store/product/delete/category`, {data})
+                .then(() => {
+                    this.whatProductSelected = 'addCategory'
+                    this.selectedProductCategory = null
+                    this.getProductCategories()
+                })
+                .catch(error => {
+                    console.error('Error deleting product:', error)
+                })
         },
 
+        deleteProduct() {
+            axios.delete(`/api/store/delete/product`, { data: { product: this.selectedProduct.id } })
+                .then(() => {
 
+                    const btnCloseEditProduct = document.getElementById('btnCloseEditProduct');
+                    if (btnCloseEditProduct) {
+                        btnCloseEditProduct.click();
+                    }
+                    this.getProductsForCategory(this.selectedCategory.id)
+                })
+                .catch(error => {
+                    console.error('Error deleting product:', error)
+                })
+        },
+
+        deleteSubcategory() {
+            axios.delete(`/api/store/delete/subCategory`, { data: { category: this.selectedCategory.id } })
+                .then(() => {
+                   this.selectedCategory = null
+                   this.getCategories()
+                   this.getProductsForCategory(this.selectedCategory.id)
+                })
+                .catch(error => {
+                    console.error('Error deleting product:', error)
+                })
+        },
+
+        deleteCategory() {
+            axios.delete(`/api/store/delete/category`, { data: { category: this.selectedCategory.id } })
+                .then(() => {
+                    this.selectedCategory = null
+                    this.getCategories()
+                    this.getProductsForCategory(this.selectedCategory.id)
+                })
+                .catch(error => {
+                    console.error('Error deleting product:', error)
+                })
+        }
     }
 }
 </script>
@@ -289,7 +343,8 @@ export default {
 
         <div class="w-25">
             <div class="d-flex flex-column align-self-center">
-                <a href="#" @click.prevent="openAddMainCategory" class="btn btn-secondary w-100 mt-3 mb-2">Add category</a>
+                <a href="#" @click.prevent="openAddMainCategory" class="btn btn-secondary w-100 mt-3 mb-2">Add
+                    category</a>
                 <template v-for="category in categories" :key="category.id">
                     <template v-if="category.childs">
                         <div class="sidebar-item p-2 w-100 d-flex flex-row justify-content-between">
@@ -317,7 +372,6 @@ export default {
                         <div class="sidebar-item p-2 w-100 d-flex flex-row justify-content-between"
                              @click.prevent="clickItem(category)">
                             <div class="text-dark">{{ category.name }}</div>
-
                         </div>
                         <div class="border border-1 border-bottom w-100"></div>
                     </template>
@@ -328,12 +382,20 @@ export default {
         <div v-if="selectedCategory" class="w-75 ms-3">
             <div class="d-flex flex-column mt-3">
                 <h3 class="text-center mt-3">{{ selectedCategory.name }}</h3>
-                <a v-if="(selectedCategory.childs) || (selectedCategory.path === '/' && !products)" href="#"
+                <a v-if="(selectedCategory.path === '/' && products.length === 0)" href="#"
                    @click.prevent="selectCategoryForAddCategory(selectedCategory.id)"
                    class="btn btn-secondary w-100 mt-2 mb-2">Add category</a>
+                <a v-if="(selectedCategory.childs) || (selectedCategory.path === '/' && !products)" href="#"
+                   @click.prevent="deleteCategory"
+                   class="btn btn-danger w-100 mt-2 mb-2">Delete category</a>
                 <a v-if="selectedCategory && selectedCategory.forProducts" href="#"
-                   @click.prevent="selectCategoryForAddProduct(selectedCategory.id)" class="btn mt-2 mb-2 btn-secondary w-100">Add
+                   @click.prevent="selectCategoryForAddProduct(selectedCategory.id)"
+                   class="btn mt-2 mb-2 btn-secondary w-100">Add
                     product</a>
+                <a v-if="selectedCategory && !selectedCategory.childs" href="#"
+                   @click.prevent="deleteSubcategory"
+                   class="btn mt-2 mb-2 btn-danger w-100">delete subcategory</a>
+
                 <template v-if="selectedCategory" class="ms-3">
                     <a id="openModalProduct" href="#" class="d-none" data-bs-target="#ModalToggleProduct"
                        data-bs-toggle="modal">Add product</a>
@@ -342,7 +404,8 @@ export default {
                         <template v-if="!selectedCategory.childs && products">
                             <div class="d-flex flex-row flex-wrap mb-5">
                                 <template v-for="product in products">
-                                    <div class="d-flex flex-column col-md-2 ps-3 pe-3 mb-3 pt-3 rounded-3 point" style="max-height: 400px"
+                                    <div class="d-flex flex-column col-md-2 ps-3 pe-3 mb-3 pt-3 rounded-3 point"
+                                         style="max-height: 400px"
                                          @click.prevent="opedEditProductModal(product)">
                                         <div class="h-75 d-block">
                                             <img :src="'/storage/images/products/' + product.imagePath" width="100%"
@@ -489,9 +552,17 @@ export default {
                                            @change="handleFileChange">
                                     <label class="input-group-text" for="inputGroupFile">Upload</label>
                                 </div>
-                                <div class="d-flex flex-row justify-content-center">
-                                    <button class="btn btn-primary w-100" @click.prevent="updateProduct">Update</button>
+
+                                <div class="d-flex flex-row ">
+                                    <div class="d-flex flex-row justify-content-center w-50 ps-3 pe-3">
+                                        <button class="btn btn-primary w-100" @click.prevent="updateProduct">Update</button>
+                                    </div>
+
+                                    <div class="d-flex flex-row justify-content-center w-50 ps-3 pe-3">
+                                        <button class="btn btn-danger w-100" @click.prevent="deleteProduct">Delete</button>
+                                    </div>
                                 </div>
+
 
                             </div>
                         </div>
@@ -511,7 +582,8 @@ export default {
                                         </div>
                                         <template v-for="product in category.items">
                                             <div class="sidebar-sub-item mb-1 text-dark"
-                                                 @click.prevent="selectProductCategoryItem(product)"> {{ product.name }}
+                                                 @click.prevent="selectProductCategoryItem(product, category)">
+                                                {{ product.name }}
                                                 <div class="border border-1 border-bottom w-100"></div>
                                             </div>
                                         </template>
@@ -533,7 +605,7 @@ export default {
                                     </div>
                                     <div class="form-floating mb-3 mt-3">
                                         <input type="number" class="form-control" id="countEl" placeholder="">
-                                        <label for="countEl">Price</label>
+                                        <label for="countEl">Count</label>
                                     </div>
                                     <button class="btn btn-primary w-100 mb-3" @click.prevent="addProductCategory">Add
                                     </button>
@@ -583,10 +655,6 @@ export default {
 .sidebar-item {
     background-color: rgba(0, 0, 0, 0); /* Прозрачный цвет слоя */
     transition: background-color 0.3s ease;
-}
-
-.sidebar-item-no-hover {
-
 }
 
 .img {

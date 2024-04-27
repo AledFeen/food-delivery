@@ -57,7 +57,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::get('/store/product/categories', [ProductController::class, 'getProductCategories']);
             Route::post('/store/product/add/category', [ProductController::class, 'addProductCategory']);
             Route::post('/store/product/category/add/item', [ProductController::class, 'addItemToCategory']);
-            Route::delete('/store/product/category/delete/item/{data}', [ProductController::class, 'deleteItemFromProductCategory']);
+            Route::delete('/store/product/category/delete/item', [ProductController::class, 'deleteItemFromProductCategory']);
+            Route::delete('/store/product/delete/category', [ProductController::class, 'deleteCategoryFromProduct']);
+            Route::delete('/store/delete/product', [ProductController::class, 'deleteProduct']);
+            Route::delete('/store/delete/subCategory', [CategoryController::class, 'deleteSubcategory']);
+            Route::delete('/store/delete/category', [CategoryController::class, 'deleteCategory']);
+
         });
 
         Route::get('/user/check/admin', [AdminController::class, 'checkAdminExistence']);

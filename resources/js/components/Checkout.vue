@@ -6,14 +6,17 @@ export default {
     mounted() {
         this.basket = JSON.parse(localStorage.getItem('basket'))
         this.checkBasket()
-        console.log(this.basket)
+        this.deliveryPrice = localStorage.getItem('deliveryPrice')
+        this.countTotalPrice()
     },
 
     data() {
         return {
             basket: null,
             phone: null,
-            address: null
+            address: null,
+            deliveryPrice: 0,
+            totalPrice: 0
         }
     },
 
@@ -22,6 +25,14 @@ export default {
             if (!Array.isArray(this.basket) && this.basket.length < 1) {
                 this.$router.push({name: 'home.index'})
             }
+        },
+
+        countTotalPrice() {
+            let total = this.basket.reduce((accumulator, currentValue) => {
+                return accumulator + currentValue.price;
+            }, 0);
+
+            this.totalPrice = parseInt(total) + parseInt(this.deliveryPrice)
         },
 
         checkout() {
@@ -68,16 +79,16 @@ export default {
                                 <div> {{ item.product.name }}</div>
                                 <div>{{ item.price }} grn</div>
                             </div>
-                            <div>Selected options:</div>
+                            <div v-if="item.options.length > 0" class="fw-semibold">Selected options:</div>
                             <div class="d-flex flex-row flex-wrap justify-content-around">
                                 <template v-for="opt in item.options">
                                     <template v-if="opt.obj">
-                                        <div> {{ opt.category + ':' + opt.obj.name }}</div>
+                                        <div> {{ opt.category + ':' + ' ' + opt.obj.name + ' '}}</div>
                                     </template>
                                     <template v-if="opt.objs">
                                         <div> {{ opt.category + ': ' }}
                                             <template v-for="o in opt.objs">
-                                                {{ o.name }}
+                                                {{' ' + o.name + ' ' }}
                                             </template>
                                         </div>
                                     </template>
@@ -90,7 +101,9 @@ export default {
             <div class="w-100 ps-5 pe-5">
                 <input v-model="phone" type="text" placeholder="phone" class="form-control mt-3 mb-3">
                 <input v-model="address" type="text" placeholder="address" class="form-control mt-3 mb-3">
-                <div @click.prevent="checkout" class="btn btn-primary w-100">Замовити</div>
+                <div>Delivery price: {{deliveryPrice}}</div>
+                <div class="fw-bold">For total: {{totalPrice}}</div>
+                <div @click.prevent="checkout" class="btn btn-primary w-100 mt-3 mb-3">Замовити</div>
             </div>
         </div>
     </div>

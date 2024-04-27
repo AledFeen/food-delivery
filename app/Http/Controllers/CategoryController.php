@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 
@@ -102,7 +104,58 @@ class CategoryController extends Controller
         return $filteredCategories;
     }
 
-    public function deleteCategory() {
+    public function deleteSubcategory(Request $request) {
+        try {
+            DB::beginTransaction();
 
+            $data = $request->all();
+
+            $products = DB::select('select * from products where category_id = ?', [$data['category']]);
+
+            foreach ($products as $product) {
+                DB::delete('delete from product_category_has_products where product_id = ?', [$product->id]);
+                DB::delete('delete from product_category_has_products where parent_id = ?', [$product->id]);
+                DB::delete('delete from product_categories where product_id = ?', [$product->id]);
+                DB::delete('delete from products where id = ?', [$product->id]);
+            }
+
+            DB::delete('delete from categories where id = ?', [$data['category']]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Транзакция не удалась: ' . $e->getMessage());
+        }
     }
+
+    public function deleteCategory(Request $request) {
+        try {
+            DB::beginTransaction();
+
+            $data = $request->all();
+
+            $subCategories = DB::select('select * from categories where parent_id = ?', [$data['category']]);
+
+            foreach ($subCategories as $subCategory) {
+                $products = DB::select('select * from products where category_id = ?', [$subCategory->id]);
+
+                foreach ($products as $product) {
+                    DB::delete('delete from product_category_has_products where product_id = ?', [$product->id]);
+                    DB::delete('delete from product_category_has_products where parent_id = ?', [$product->id]);
+                    DB::delete('delete from product_categories where product_id = ?', [$product->id]);
+                    DB::delete('delete from products where id = ?', [$product->id]);
+                }
+
+                DB::delete('delete from categories where id = ?', [$subCategory->id]);
+            }
+
+            DB::delete('delete from categories where id = ?', [$data['category']]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Транзакция не удалась: ' . $e->getMessage());
+        }
+    }
+
 }
