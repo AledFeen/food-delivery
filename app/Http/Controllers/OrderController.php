@@ -56,4 +56,57 @@ class OrderController extends Controller
             Log::error('Транзакция не удалась: ' . $e->getMessage());
         }
     }
+
+    public function getAvailableOrders() {
+        $user_id = Auth::id();
+        $courier = DB::selectOne('select * from couriers where users_id = ? limit 1', [$user_id]);
+        $orders = DB::select('select orders.*, c.name as city, c.country as phoneCourier, st.* from orders
+        left join main.cities c on c.id = orders.cities_id
+        left join main.stores st on st.id = orders.stores_id where status = 0 and cities_id = ?', [$courier->cities_id]);
+        return ['orders' => $orders];
+    }
+
+    public function selectOrderForDelivery(Request $request) {
+        $orderId = $request->input('orderId');
+        $user_id = Auth::id();
+        $courier = DB::selectOne('select * from couriers where users_id = ? limit 1', [$user_id]);
+        $dateTime = new DateTime();
+        $date = $dateTime->format('Y-m-d H:i:s');
+
+        DB::update('update orders set courier_id = ?, updated_at = ?, status = 1 where id = ?', [$courier->id, $date, $orderId]);
+    }
+
+    public function getCurrentOrderForCourier() {
+        $user_id = Auth::id();
+        $courier = DB::selectOne('select * from couriers where users_id = ? limit 1', [$user_id]);
+        $orders = DB::select('select orders.*, c.name as city, c.country, cour.name as courierName, cour.surname, cour.phone as phoneCourier, st.* from orders
+    left join main.cities c on c.id = orders.cities_id
+    left join main.couriers cour on cour.id = orders.courier_id
+    left join main.stores st on st.id = orders.stores_id where courier_id = ? and status = 1', [$courier->id]);
+
+        return ['orders' => $orders];
+    }
+
+    public function getCompletedOrdersForCourier() {
+        $user_id = Auth::id();
+        $courier = DB::selectOne('select * from couriers where users_id = ? limit 1', [$user_id]);
+        $orders = DB::select('select orders.*, c.name as city, c.country, cour.name as courierName, cour.surname, cour.phone as phoneCourier, st.* from orders
+    left join main.cities c on c.id = orders.cities_id
+    left join main.couriers cour on cour.id = orders.courier_id
+    left join main.stores st on st.id = orders.stores_id where courier_id = ? and status = 2', [$courier->id]);
+
+        return ['orders' => $orders];
+    }
+
+    public function getUserOrders() {
+        $user_id = Auth::id();
+        $orders = DB::select('select * from orders where users_id = ? ORDER BY id DESC', [$user_id]);
+        return ['orders' => $orders];
+    }
+
+    public function submitDelivery(Request $request) {
+        $orderId = $request->input('orderId');
+        DB::update('update orders set status = 2 where id = ?', [$orderId]);
+    }
+
 }

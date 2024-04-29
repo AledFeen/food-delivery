@@ -41,6 +41,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::post('/checkout', [OrderController::class, 'checkout']);
+        Route::get('/user/orders', [OrderController::class, 'getUserOrders']);
+        Route::post('/user/orders/submit', [OrderController::class, 'submitDelivery']);
 
         Route::get('/user/check/store', [StoreController::class, 'checkStoreExistence']);
         Route::group(['middleware' => 'isStore'], function () {
@@ -74,7 +76,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
         Route::get('/user/check/courier', [CourierController::class, 'checkCourierExistence']);
         Route::group(['middleware' => 'isCourier'], function () {
-            Route::get('user/courier', [CourierController::class, 'selectCourier']);
+            Route::get('/user/courier', [CourierController::class, 'selectCourier']);
+            Route::get('/courier/availableOrders', [OrderController::class, 'getAvailableOrders']);
+            Route::get('/courier/currentOrder', [OrderController::class, 'getCurrentOrderForCourier']);
+            Route::post('/courier/selectOrder', [OrderController::class, 'selectOrderForDelivery']);
         });
 
     });

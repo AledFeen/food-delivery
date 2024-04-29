@@ -94,6 +94,7 @@ export default {
                         </div>
                     </template>
                     <router-link v-if="token && isCourier" :to="{ name: 'user.courier' }" class="btn header-link">Courier</router-link>
+                    <router-link v-if="token" :to="{ name: 'orders' }" class="btn header-link">My orders</router-link>
                     <input v-if="token" @click.prevent="logout" type="submit" value="Logout"  class="btn header-link">
                 </div>
             </div>
