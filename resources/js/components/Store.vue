@@ -11,10 +11,12 @@ export default {
 
     updated() {
         this.setDefaultSelectedCategory()
+        this.checkUser();
     },
 
     data() {
         return {
+            token: null,
             store: null,
             categories: [],
             maxPath: 0,
@@ -47,6 +49,11 @@ export default {
     },
 
     methods: {
+
+        checkUser() {
+            this.token = localStorage.getItem('x-xsrf-token')
+        },
+
         getStore() {
             axios.get('/api/store', {
                 params: {id: this.storeId}
@@ -400,11 +407,13 @@ export default {
                             </div>
                             <div @click.prevent="deleteItemFromBasket(item)" class="btn btn-danger ms-5 me-5 mb-3 mt-3">Видалити</div>
                         </div>
-
                     </template>
 
-                    <template v-if="basket.length > 0">
+                    <template v-if="basket.length > 0 && token">
                         <div @click.prevent="clickCheckout" class="btn btn-primary ms-5 me-5 mt-3 mb-3">Оформити</div>
+                    </template>
+                    <template v-if="!token">
+                        <div class="text-danger">You need authorize to checkout</div>
                     </template>
                 </div>
             </div>

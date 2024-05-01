@@ -47,10 +47,11 @@ export default {
                     store: store,
                     basket: this.basket,
                     phone: this.phone,
-                    address: this.address
+                    address: this.address,
+                    price: this.totalPrice
                 })
-                    .then(r => {
-                        console.log(r)
+                    .then(() => {
+                        this.$router.push({name: 'orders'})
                     })
                     .catch(error => {
                         console.error('Error fetching store:', error)

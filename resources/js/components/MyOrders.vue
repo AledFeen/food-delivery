@@ -45,15 +45,21 @@ export default {
                         <div class="card-body">
                             <h5 class="card-title">Order #{{ order.id }}</h5>
                             <p class="card-text"><strong>User ID:</strong> {{ order.users_id }}</p>
-                            <p class="card-text"><strong>Courier ID:</strong> {{ order.courier_id }}</p>
-                            <p class="card-text"><strong>City ID:</strong> {{ order.cities_id }}</p>
-                            <p class="card-text"><strong>Store ID:</strong> {{ order.stores_id }}</p>
+                            <template v-if="order.courier_id">
+                                <p class="card-text"><strong>Courier ID:</strong> {{ order.courier_id }}</p>
+                                <p class="card-text"><strong>Courier name:</strong> {{ order.courierName }}</p>
+                                <p class="card-text"><strong>Courier phone:</strong> {{ order.phoneCourier }}</p>
+                            </template>
+                            <p class="card-text"><strong>City:</strong> {{ order.city }}</p>
+                            <p class="card-text"><strong>Store:</strong> {{ order.storeName }}</p>
                             <p class="card-text"><strong>Phone Number:</strong> {{ order.phoneNumber }}</p>
                             <p class="card-text"><strong>Address:</strong> {{ order.address }}</p>
                             <p class="card-text"><strong>Price:</strong> ${{ order.price }}</p>
                             <p class="card-text"><strong>Status:</strong> {{ order.status }}</p>
                             <p class="card-text"><strong>Created At:</strong> {{ order.created_at }}</p>
-                            <p class="card-text"><strong>Updated At:</strong> {{ order.updated_at }}</p>
+                            <template v-if="order.courier_id">
+                                <p class="card-text"><strong>Updated At:</strong> {{ order.updated_at }}</p>
+                            </template>
                             <template v-if="order.status == 1">
                                 <div @click.prevent="submitDelivery(order.id)" class="btn btn-primary btn-sm">Succeed</div>
                             </template>

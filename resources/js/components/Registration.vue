@@ -23,7 +23,7 @@ export default {
                     localStorage.setItem('x-xsrf-token', r.config.headers['X-XSRF-TOKEN'])
                     this.$router.push({name: 'home.index'})
                 }).catch(err => {
-                    console.log(err.response)
+                    alert(err.response.data.message)
                 })
             })
         }

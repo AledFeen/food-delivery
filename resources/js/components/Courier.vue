@@ -42,7 +42,7 @@ export default {
                     this.getCurrentOrders()
                 })
                 .catch(error => {
-                    console.error('Error deleting product:', error)
+                    console.error('Error adding product:', error)
                 })
         }
     }
@@ -60,11 +60,10 @@ export default {
                     <div v-for="order in currentOrders" class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Order #{{ order.id }}</h5>
-                            <p class="card-text"><strong>User ID:</strong> {{ order.users_id }}</p>
-                            <p class="card-text"><strong>Courier ID:</strong> {{ order.courier_id }}</p>
-                            <p class="card-text"><strong>City ID:</strong> {{ order.cities_id }}</p>
-                            <p class="card-text"><strong>Store ID:</strong> {{ order.stores_id }}</p>
-                            <p class="card-text"><strong>Phone Number:</strong> {{ order.phoneNumber }}</p>
+                            <p class="card-text"><strong>User address:</strong> {{ order.address }}</p>
+                            <p class="card-text"><strong>User phone:</strong> {{ order.phoneNumber }}</p>
+                            <p class="card-text"><strong>City:</strong> {{ order.city }}</p>
+                            <p class="card-text"><strong>Store:</strong> {{ order.storeName }}</p>
                             <p class="card-text"><strong>Address:</strong> {{ order.address }}</p>
                             <p class="card-text"><strong>Price:</strong> ${{ order.price }}</p>
                             <p class="card-text"><strong>Status:</strong> {{ order.status === '1' ? 'Pending' : 'Completed' }}</p>
@@ -88,15 +87,13 @@ export default {
                         <tr>
                             <th>Order</th>
                             <th>User ID</th>
-                            <th>Courier ID</th>
-                            <th>City ID</th>
-                            <th>Store ID</th>
+                            <th>City</th>
+                            <th>Store</th>
                             <th>Phone Number</th>
                             <th>Address</th>
                             <th>Price</th>
                             <th>Status</th>
                             <th>Created At</th>
-                            <th>Updated At</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -104,15 +101,13 @@ export default {
                         <tr v-for="order in availableOrders">
                             <td>{{ order.id }}</td>
                             <td>{{ order.users_id }}</td>
-                            <td>{{ order.courier_id }}</td>
-                            <td>{{ order.cities_id }}</td>
-                            <td>{{ order.stores_id }}</td>
+                            <td>{{ order.city }}</td>
+                            <td>{{ order.storeName }}</td>
                             <td>{{ order.phoneNumber }}</td>
                             <td>{{ order.address }}</td>
                             <td>${{ order.price }}</td>
                             <td>{{ order.status === '0' ? 'Pending' : 'Completed' }}</td>
                             <td>{{ order.created_at }}</td>
-                            <td>{{ order.updated_at }}</td>
                             <td><button @click.prevent="selectOrderForDelivery(order.id)" class="btn btn-primary btn-sm">Process Order</button></td>
                         </tr>
                         </tbody>
@@ -120,8 +115,6 @@ export default {
                 </div>
             </div>
         </div>
-
-
     </template>
 </template>
 
