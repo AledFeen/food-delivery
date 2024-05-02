@@ -43,8 +43,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/checkout', [OrderController::class, 'checkout']);
         Route::get('/user/orders', [OrderController::class, 'getUserOrders']);
         Route::post('/user/orders/submit', [OrderController::class, 'submitDelivery']);
-
         Route::get('/user/check/store', [StoreController::class, 'checkStoreExistence']);
+
         Route::group(['middleware' => 'isStore'], function () {
             Route::get('/user/store', [StoreController::class, 'selectUserStore']);
             Route::post('/user/store/updateProfile', [StoreController::class, 'updateStoreProfile']);
@@ -68,6 +68,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         });
 
         Route::get('/user/check/admin', [AdminController::class, 'checkAdminExistence']);
+
         Route::group(['middleware' => 'isAdmin'], function () {
             Route::get('/user/admin', [AdminController::class, 'selectAdmin']);
             Route::get('/admin/users/get', [AdminController::class, 'getUsers']);
@@ -75,6 +76,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         });
 
         Route::get('/user/check/courier', [CourierController::class, 'checkCourierExistence']);
+
         Route::group(['middleware' => 'isCourier'], function () {
             Route::get('/user/courier', [CourierController::class, 'selectCourier']);
             Route::get('/courier/availableOrders', [OrderController::class, 'getAvailableOrders']);

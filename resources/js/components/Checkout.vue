@@ -1,7 +1,6 @@
 <script>
 export default {
     name: "Checkout",
-    // props: ['basket'],
 
     mounted() {
         this.basket = JSON.parse(localStorage.getItem('basket'))

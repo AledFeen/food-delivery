@@ -23,7 +23,6 @@ class OrderController extends Controller
         $date = $dateTime->format('Y-m-d H:i:s');
         $price = $request->input('price');
 
-
         try{
             DB::beginTransaction();
 
@@ -80,11 +79,11 @@ class OrderController extends Controller
         $user_id = Auth::id();
         $courier = DB::selectOne('select * from couriers where users_id = ? limit 1', [$user_id]);
         $orders = DB::select('select orders.*, c.name as city, c.country, cour.name as courierName, cour.surname, cour.phone as phoneCourier, st.name as storeName from orders
-    left join main.cities c on c.id = orders.cities_id
-    left join main.couriers cour on cour.id = orders.courier_id
-    left join main.stores st on st.id = orders.stores_id where courier_id = ? and status = 1', [$courier->id]);
+        left join main.cities c on c.id = orders.cities_id
+        left join main.couriers cour on cour.id = orders.courier_id
+        left join main.stores st on st.id = orders.stores_id where courier_id = ? and status = 1', [$courier->id]);
 
-        return ['orders' => $orders];
+        return ['orders' => $this->addProductsToOrders($orders)];
     }
 
     public function getCompletedOrdersForCourier() {
@@ -105,14 +104,34 @@ class OrderController extends Controller
         left join main.couriers cour on cour.id = orders.courier_id
         left join main.stores st on st.id = orders.stores_id
          where orders.users_id = ? ORDER BY id DESC', [$user_id]);
-        return ['orders' => $orders];
+
+
+        return ['orders' => $this->addProductsToOrders($orders)];
     }
 
     public function submitDelivery(Request $request) {
         $dateTime = new DateTime();
         $date = $dateTime->format('Y-m-d H:i:s');
         $orderId = $request->input('orderId');
-        DB::update('update orders set status = 2 and updated_at = ? where id = ?', [$orderId, $date]);
+        DB::update('update orders set status = 2, updated_at = ? where id = ?', [$date, $orderId]);
     }
 
+    private function addProductsToOrders($orders) {
+        $products = DB::select('select * from selected_products');
+        $options = DB::select('select * from selected_options');
+        foreach ($orders as $order) {
+            foreach ($products as $product) {
+                if($order->id == $product->orders_id) {
+                    $pr = clone $product;
+                    foreach ($options as $option) {
+                        if($option->selected_product_id == $pr->id) {
+                            $pr->options[] = $option;
+                        }
+                    }
+                    $order->products[] = $pr;
+                }
+            }
+        }
+        return $orders;
+    }
 }

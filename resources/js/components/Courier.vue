@@ -56,19 +56,38 @@ export default {
         <div class="container">
             <h1 class="text-center mt-5 mb-4">Current Orders</h1>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div v-for="order in currentOrders" class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">Order #{{ order.id }}</h5>
-                            <p class="card-text"><strong>User address:</strong> {{ order.address }}</p>
-                            <p class="card-text"><strong>User phone:</strong> {{ order.phoneNumber }}</p>
-                            <p class="card-text"><strong>City:</strong> {{ order.city }}</p>
-                            <p class="card-text"><strong>Store:</strong> {{ order.storeName }}</p>
-                            <p class="card-text"><strong>Address:</strong> {{ order.address }}</p>
-                            <p class="card-text"><strong>Price:</strong> ${{ order.price }}</p>
-                            <p class="card-text"><strong>Status:</strong> {{ order.status === '1' ? 'Pending' : 'Completed' }}</p>
-                            <p class="card-text"><strong>Created At:</strong> {{ order.created_at }}</p>
-                            <p class="card-text"><strong>Updated At:</strong> {{ order.updated_at }}</p>
+                            <div class="d-flex flex-row justify-content-between">
+                                <div class="w-50 text-center">
+                                    <h5 class="card-title">Order #{{ order.id }}</h5>
+                                    <p class="card-text"><strong>User address:</strong> {{ order.address }}</p>
+                                    <p class="card-text"><strong>User phone:</strong> {{ order.phoneNumber }}</p>
+                                    <p class="card-text"><strong>City:</strong> {{ order.city }}</p>
+                                    <p class="card-text"><strong>Store:</strong> {{ order.storeName }}</p>
+                                    <p class="card-text"><strong>Address:</strong> {{ order.address }}</p>
+                                    <p class="card-text"><strong>Price:</strong> ${{ order.price }}</p>
+                                    <p class="card-text"><strong>Status:</strong> {{ order.status === '1' ? 'Pending' : 'Completed' }}</p>
+                                    <p class="card-text"><strong>Created At:</strong> {{ order.created_at }}</p>
+                                    <p class="card-text"><strong>Updated At:</strong> {{ order.updated_at }}</p>
+                                </div>
+                                <div class="w-50 text-center">
+                                    <h5 class="card-title">Products</h5>
+                                    <template v-if="order.products">
+                                        <template v-for="(product, index) in order.products">
+                                            <p class="card-text"><strong>Product {{index+1}}: </strong> {{ product.name}}. <strong>Price: </strong>. {{ product.price}} <strong>Count: </strong> {{ product.count}}.</p>
+                                            <template v-if="product.options">
+                                                <p class="card-subtitle">Options:</p>
+                                                <template v-for="options in product.options">
+                                                    {{' ' + options.name}}
+                                                </template>
+                                            </template>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
