@@ -38,6 +38,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/store/category/products', [ProductController::class, 'getProductsByCategoryId']);
     Route::get('/home/store/product/categories', [ProductController::class, 'getProductCategoriesByStoreId']);
 
+
     Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::post('/checkout', [OrderController::class, 'checkout']);
@@ -64,7 +65,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::delete('/store/delete/product', [ProductController::class, 'deleteProduct']);
             Route::delete('/store/delete/subCategory', [CategoryController::class, 'deleteSubcategory']);
             Route::delete('/store/delete/category', [CategoryController::class, 'deleteCategory']);
-
         });
 
         Route::get('/user/check/admin', [AdminController::class, 'checkAdminExistence']);

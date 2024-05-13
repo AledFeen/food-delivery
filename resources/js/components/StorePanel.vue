@@ -154,6 +154,7 @@ export default {
             axios.post('/api/store/add/product', formData)
                 .then(() => {
                     this.getProductsForCategory(this.selectedCategory.id)
+                    //this.selectedCategory = this.selectedCategory
                     const closeBtn = document.getElementById('btnCloseProduct');
                     closeBtn.click();
                 })
@@ -350,7 +351,6 @@ export default {
                         <div class="sidebar-item p-2 w-100 d-flex flex-row justify-content-between">
                             <div class="w-75" @click.prevent="clickItem(category)">
                                 <div class="text-dark">{{ category.name }}</div>
-
                             </div>
                             <img :src="'/storage/images/static/arrow_left.png'" width="12px" height="12px" class="mt-1"
                                  :id="'btn_category' + category.id" @click.prevent="toggleChildVisibility(category.id)"
@@ -362,7 +362,6 @@ export default {
                                 <div class="sidebar-sub-item p-2 w-100 d-flex flex-row justify-content-between"
                                      @click.prevent="clickItem(child)">
                                     <div class="text-dark">{{ child.name }}</div>
-
                                 </div>
                                 <div class="border border-1 border-bottom w-100"></div>
                             </template>
@@ -379,7 +378,7 @@ export default {
             </div>
         </div>
 
-        <div v-if="selectedCategory" class="w-75 ms-3">
+        <div v-if="selectedCategory && products" class="w-75 ms-3">
             <div class="d-flex flex-column mt-3">
                 <h3 class="text-center mt-3">{{ selectedCategory.name }}</h3>
                 <a v-if="(selectedCategory.path === '/' && products.length === 0)" href="#"
@@ -414,7 +413,6 @@ export default {
                                         <div class="card-body">
                                             <div class="mt-2 card-title">{{ product.name }}</div>
                                             <div class="fw-bold card-subtitle">{{ product.price }}</div>
-                                            <div class="card-subtitle">delivery price</div>
                                         </div>
                                         <div class="overlay"></div>
                                     </div>

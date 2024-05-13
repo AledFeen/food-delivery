@@ -35,5 +35,4 @@ class CityController extends Controller
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
         DB::delete('delete from cities_has_stores where store_id = ? and city_id = ?', [$store->id, $id]);
     }
-
 }

@@ -81,7 +81,7 @@ export default {
             formData.append('type_store', selectedOption)
             axios.post('/api/admin/users/add', formData)
                 .then(res => {
-
+                    this.$router.push({ name: 'admin.users'});
                 })
                 .catch(error => {
                     console.error('Error fetching store:', error)

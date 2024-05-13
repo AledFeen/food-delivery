@@ -101,7 +101,7 @@ export default {
 
 <template>
     <template v-if="!selectedCity">
-        <h3 class="text-dark text-center mt-3">Оберіть ваше місто</h3>
+        <h3 class="text-dark text-center mt-3">Select your city</h3>
         <div class="d-flex flex-row justify-content-center">
             <select v-model="selectedCity" class="form-select w-25" id="citySelect" aria-label="Floating label select example">
                 <option :value="null"></option>
@@ -112,7 +112,7 @@ export default {
         </div>
     </template>
     <template v-else>
-        <div class="text-dark text-center mt-2">Ви обрали місто
+        <div class="text-dark text-center mt-2">You changed city
             <a id="openModalCategory" href="#" class="text-dark" data-bs-target="#ModalToggleCity" data-bs-toggle="modal">{{selectedCity.name}}</a>
         </div>
     </template>
@@ -121,16 +121,16 @@ export default {
         <div class="d-flex flex-row">
             <div class="w-25">
                 <div class="d-flex flex-column text-center">
-                    <div :id="'clear_filter'" @click.prevent="selectFilter(15,null)" class="btn btn-danger mb-3 w-75">Очистити</div>
+                    <div :id="'clear_filter'" @click.prevent="selectFilter(15,null)" class="btn btn-danger mb-3 w-75">Clear</div>
                     <template v-if="types">
-                        <h4 class="text-dark text-start">Тип закладу</h4>
+                        <h4 class="text-dark text-start">Type shop</h4>
                             <template v-for="type in types">
                                 <div :id="'filter_type_' + type.name" @click.prevent="selectFilter(0,type)" class="filter text-dark p-1 m-1 w-75 rounded-1">{{type.name}}</div>
                                 <div class="border border-1 border-bottom w-75"></div>
                             </template>
                     </template>
                     <template v-if="categories">
-                        <h4 class="text-dark text-start mt-3">Категорія</h4>
+                        <h4 class="text-dark text-start mt-3">Category</h4>
                         <div class="d-flex flex-column">
                             <template v-for="category in categories">
                                 <div :id="'filter_category_' + category.name" @click.prevent="selectFilter(1,category)" class="filter text-dark p-1 m-1 w-75 rounded-1">{{category.name}}</div>
@@ -142,7 +142,7 @@ export default {
             </div>
             <div class="w-75 mt-3 d-flex flex-row flex-wrap">
                 <template v-for="store in stores">
-                    <div class="col-4 d-flex flex-column ms-1 me-1 rounded-3 border border-1">
+                    <div class="col-4 d-flex flex-column ms-1 me-1 rounded-3 border border-1 h-50">
                         <div class="image-container rounded-3 h-75">
                             <img :src="'/storage/images/stores/' + store.image" class="w-100 rounded-3 img" alt="Image">
                             <div @click.prevent="selectStore(store.id)" class="overlay"></div>
@@ -160,7 +160,7 @@ export default {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Оберіть місто</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Select your city</h1>
                     <button id="btnCloseCategory" type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>

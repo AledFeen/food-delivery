@@ -7,6 +7,7 @@ export default {
         this.getStore()
         this.getCategories()
         this.setDefaultSelectedCategory()
+        this.deliveryPrice = localStorage.getItem('deliveryPrice')
     },
 
     updated() {
@@ -22,6 +23,8 @@ export default {
             maxPath: 0,
             name: null,
             basket: [],
+
+            deliveryPrice: null,
 
             products: [],
             storeProducts: [],
@@ -60,7 +63,7 @@ export default {
             }).then(res => {
                 this.store = res.data.store
             }).catch(error => {
-                console.error('Error fetching posts:', error)
+                console.error('Error fetching store:', error)
             })
         },
 
@@ -378,7 +381,6 @@ export default {
                                     <div class="card-body">
                                         <div class="mt-2 card-title">{{ product.name }}</div>
                                         <div class="fw-bold card-subtitle">{{ product.price }}</div>
-                                        <div class="card-subtitle">delivery price</div>
                                     </div>
                                     <div class="overlay"></div>
                                 </div>
@@ -465,15 +467,15 @@ export default {
                                 <img :src="'/storage/images/products/' + selectedProduct.imagePath" alt="Image"
                                      class="mw-100 mh-100">
                                 <div>{{ selectedProduct.name }}</div>
-                                <div>Ціна: {{ selectedProduct.price }}</div>
+                                <div>Price: <b>{{ selectedProduct.price }}</b></div>
+                                <div class="mb-1">{{ selectedProduct.description }}</div>
                                 <div class="d-flex flex-row justify-content-center">
                                     <div class="btn btn-dark" @click.prevent="minusCount">-</div>
                                     <div class="ms-3 me-3 pt-2">{{ selectedCount }}</div>
                                     <div class="btn btn-dark" @click.prevent="plusCount">+</div>
                                 </div>
-                                <div class="text-center mt-1">Загалом: {{ this.totalProductPrice }}</div>
-                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Додати в
-                                    кошик
+                                <div class="text-center mt-1">Total: {{ this.totalProductPrice }}</div>
+                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Add to basket
                                 </div>
                             </div>
                         </div>
@@ -485,13 +487,14 @@ export default {
 
                                 </div>
                                 <div>{{ selectedProduct.name }}</div>
-                                <div>Ціна: {{ selectedProduct.price }}</div>
+                                <div>Price: <b>{{ selectedProduct.price }}</b></div>
+                                <div class="mb-1">{{ selectedProduct.description}}</div>
                                 <div class="d-flex flex-row justify-content-center">
                                     <div class="btn btn-dark" @click.prevent="minusCount">-</div>
                                     <div class="ms-3 me-3 pt-2">{{ selectedCount }}</div>
                                     <div class="btn btn-dark" @click.prevent="plusCount">+</div>
                                 </div>
-                                <div class="text-center mt-1">Загалом: {{ this.totalProductPrice }}</div>
+                                <div class="text-center mt-1">Total: {{ this.totalProductPrice }}</div>
                                 <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Add to basket
                                 </div>
                             </div>

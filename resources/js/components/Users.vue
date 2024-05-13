@@ -84,9 +84,9 @@ export default {
                 <tr :class="isSelected(user.user.id) ? '' : 'd-none'">
                     <th scope="row"></th>
                     <td v-if="!hasStore"><a href="#" @click.prevent="addStore()" class="btn btn-secondary w-100">Add store</a></td>
-                    <td><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete store</a></td>
+                    <td  v-if="hasStore"><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete store</a></td>
                     <td v-if="!isCourier"><a href="#" @click.prevent="" class="btn btn-secondary w-100">Add courier</a></td>
-                    <td><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete courier</a></td>
+                    <td v-if="isCourier"><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete courier</a></td>
                 </tr>
             </template>
             </tbody>
