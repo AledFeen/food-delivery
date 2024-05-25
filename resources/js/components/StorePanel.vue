@@ -160,7 +160,7 @@ export default {
                 })
                 .catch(error => {
                     console.error('Error fetching store:', error)
-                    window.alert("Error. Try again.");
+                    window.alert("Error. Try again. " + error.response.data.message);
                 })
         },
 
@@ -180,7 +180,7 @@ export default {
                 })
                 .catch(error => {
                     console.error('Error fetching store:', error)
-                    window.alert("Error. Try again.");
+                    window.alert("Error. Try again. " + error.response.data.message);
                 })
         },
 

@@ -15,34 +15,55 @@ class ProductController extends Controller
 {
     public function addProduct(Request $request)
     {
-        $name = $request->input('name');
-        $description = $request->input('description');
-        $category_id = $request->input('category_id');
-        $price = $request->input('price');
-        $image = $request->file('image');
+        // Правила валидации
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-        $imagePath = Storage::put('/public/images/products', $image);
-        $imageName = basename($imagePath);
+        if ($request->file('image')->isValid()) {
+            $name = $request->input('name');
+            $description = $request->input('description');
+            $category_id = $request->input('category_id');
+            $price = $request->input('price');
+            $image = $request->file('image');
 
-        DB::insert('insert into products(name, description, price, imagePath, category_id) VALUES (?,?,?,?,?)', [$name, $description, $price, $imageName, $category_id]);
+            $imagePath = Storage::put('/public/images/products', $image);
+            $imageName = basename($imagePath);
+
+            DB::insert('insert into products (name, description, price, imagePath, category_id) values (?, ?, ?, ?, ?)', [
+                $name, $description, $price, $imageName, $category_id
+            ]);
+
+
+            return back()->with('success', 'Successfully added.');
+        }
+        return back()->with('error', 'Incorrect image format.');
     }
 
     public function updateProduct(Request $request)
     {
-        $prevImage = $request->input('prevImage');
-        Storage::delete('/public/images/products/' . $prevImage);
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-        $product_id = $request->input('product_id');
-        $name = $request->input('name');
-        $description = $request->input('description');
-        $category_id = $request->input('category_id');
-        $price = $request->input('price');
-        $image = $request->file('image');
+        if ($request->file('image')->isValid()) {
+            $prevImage = $request->input('prevImage');
+            Storage::delete('/public/images/products/' . $prevImage);
 
-        $imagePath = Storage::put('/public/images/products', $image);
-        $imageName = basename($imagePath);
+            $product_id = $request->input('product_id');
+            $name = $request->input('name');
+            $description = $request->input('description');
+            $category_id = $request->input('category_id');
+            $price = $request->input('price');
+            $image = $request->file('image');
 
-        DB::update('update products set name = ?, description = ?, price = ?, imagePath = ?, category_id = ? where id = ?', [$name, $description, $price, $imageName, $category_id, $product_id]);
+            $imagePath = Storage::put('/public/images/products', $image);
+            $imageName = basename($imagePath);
+
+            DB::update('update products set name = ?, description = ?, price = ?, imagePath = ?, category_id = ? where id = ?', [$name, $description, $price, $imageName, $category_id, $product_id]);
+            return back()->with('success', 'Successfully added.');
+        }
+        return back()->with('error', 'Incorrect image format.');
     }
 
     public function getProductCategories(Request $request)
@@ -154,6 +175,8 @@ class ProductController extends Controller
             DB::delete('delete from product_category_has_products where product_id = ?', [ $data['product']]);
             DB::delete('delete from product_category_has_products where parent_id = ?', [ $data['product']]);
             DB::delete('delete from product_categories where product_id = ?', [$data['product']]);
+            $image = DB::selectOne('select imagePath from products where id = ?', [$data['product']]);
+            Storage::delete('/public/images/products/' . $image->imagePath);
             DB::delete('delete from products where id = ?', [$data['product']]);
 
             DB::commit();

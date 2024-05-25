@@ -19,13 +19,16 @@ class StoreController extends Controller
         $result = $user ? true : false;
         return ['result' => $result];
     }
-    public function selectUserStore() {
+
+    public function selectUserStore()
+    {
         $user_id = Auth::id();
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
         return ['store' => $store];
     }
 
-    public function getStoreById(Request $request) {
+    public function getStoreById(Request $request)
+    {
         $id = $request->query('id');
         $store = DB::selectOne('select * from stores where id = ? limit 1', [$id]);
         return ['store' => $store];
@@ -38,11 +41,13 @@ class StoreController extends Controller
         return ['stores' => $stores];
     }
 
-    public function updateStoreProfile(Request $request) {
+    public function updateStoreProfile(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-        DB::beginTransaction();
-
-        try {
+        if ($request->file('image')->isValid()) {
             $user_id = Auth::id();
             $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
             $im = $store->image;
@@ -59,11 +64,8 @@ class StoreController extends Controller
             $imageName = basename($imagePath);
             DB::update('update stores set name = ?, description = ?, image = ?, type_store = ?, category = ?, updated_at = ? where id = ?',
                 [$name, $description, $imageName, $type_store, $store_category, $date, $store->id]);
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollback();
-            return response()->json(['message' => 'Произошла ошибка: ' . $e->getMessage()], 500);
+            return back()->with('success', 'Successfully added.');
         }
+        return back()->with('error', 'Incorrect image format.');
     }
-
 }

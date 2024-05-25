@@ -116,6 +116,8 @@ class CategoryController extends Controller
                 DB::delete('delete from product_category_has_products where product_id = ?', [$product->id]);
                 DB::delete('delete from product_category_has_products where parent_id = ?', [$product->id]);
                 DB::delete('delete from product_categories where product_id = ?', [$product->id]);
+                $image = DB::selectOne('select imagePath from products where id = ?', [$product->id]);
+                Storage::delete('/public/images/products/' . $image->imagePath);
                 DB::delete('delete from products where id = ?', [$product->id]);
             }
 
@@ -143,6 +145,8 @@ class CategoryController extends Controller
                     DB::delete('delete from product_category_has_products where product_id = ?', [$product->id]);
                     DB::delete('delete from product_category_has_products where parent_id = ?', [$product->id]);
                     DB::delete('delete from product_categories where product_id = ?', [$product->id]);
+                    $image = DB::selectOne('select imagePath from products where id = ?', [$product->id]);
+                    Storage::delete('/public/images/products/' . $image->imagePath);
                     DB::delete('delete from products where id = ?', [$product->id]);
                 }
 
