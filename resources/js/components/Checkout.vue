@@ -72,23 +72,28 @@ export default {
             <div class="w-100 h-100 bg-light ps-5 pe-5">
                 <div class="d-flex flex-column text-center">
                     <template v-if="basket && basket.length > 0" v-for="(item, index) in basket">
-                        <div class="d-block border border-1 m-3 rounded-3">
-                            <h5 class="text-center mt-3">Item {{ index + 1 }}</h5>
-                            <div class="d-flex flex-row mt-1 mb-1 justify-content-around">
-                                <div>{{ item.count }}x</div>
-                                <div> {{ item.product.name }}</div>
-                                <div>{{ item.price }} grn</div>
+                        <div class="d-block border border-1 m-2 rounded-3">
+
+                            <div class="d-flex flex-row mt-2 mb-1 justify-content-between align-items-center flex-wrap h-100" >
+                                <div class="d-flex flex-row mt-2 mb-1 justify-content-between align-items-center flex-wrap">
+                                    <img :src="'/storage/images/products/' + item.product.imagePath"
+                                         alt="product img" class="img rounded-5 card-img w-25 ps-3">
+                                    <div class="fw-bold text-end">{{ item.count }}x</div>
+                                    <div> {{ item.product.name }}</div>
+                                    <div class="fw-bolder ps-1 pe-3">{{ item.price }} grn</div>
+                                </div>
                             </div>
+
                             <div v-if="item.options.length > 0" class="fw-semibold">Selected options:</div>
                             <div class="d-flex flex-row flex-wrap justify-content-around">
                                 <template v-for="opt in item.options">
                                     <template v-if="opt.obj">
-                                        <div> {{ opt.category + ':' + ' ' + opt.obj.name + ' '}}</div>
+                                        <div> {{ opt.category + ':' + ' ' + opt.obj.name + ' ' }}</div>
                                     </template>
                                     <template v-if="opt.objs">
                                         <div> {{ opt.category + ': ' }}
                                             <template v-for="o in opt.objs">
-                                                {{' ' + o.name + ' ' }}
+                                                {{ ' ' + o.name + ' ' }}
                                             </template>
                                         </div>
                                     </template>
@@ -101,8 +106,8 @@ export default {
             <div class="w-100 ps-5 pe-5">
                 <input v-model="phone" type="text" placeholder="phone" class="form-control mt-3 mb-3">
                 <input v-model="address" type="text" placeholder="address" class="form-control mt-3 mb-3">
-                <div>Delivery price: {{deliveryPrice}}</div>
-                <div class="fw-bold">For total: {{totalPrice}}</div>
+                <div>Delivery price: {{ deliveryPrice }}</div>
+                <div class="fw-bold">For total: {{ totalPrice }}</div>
                 <div @click.prevent="checkout" class="btn btn-primary w-100 mt-3 mb-3">Замовити</div>
             </div>
         </div>

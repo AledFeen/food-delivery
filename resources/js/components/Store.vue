@@ -177,8 +177,7 @@ export default {
                             const element = document.getElementById('option_' + el.category + '_' + el.obj.name)
                             element.classList.remove("bg-primary")
                             el.obj = null
-                        }
-                         else {
+                        } else {
                             const element = document.getElementById('option_' + el.category + '_' + el.obj.name)
                             element.classList.remove("bg-primary")
                             const element1 = document.getElementById('option_' + category.name + '_' + product.name)
@@ -399,20 +398,25 @@ export default {
                     <h4 class="mt-3">Basket</h4>
                     <template v-if="basket.length > 0" v-for="(item, index) in basket">
                         <div class="d-block border border-1 m-3 rounded-3">
-                            <h5 class="text-center mt-3">Item {{index + 1}}</h5>
-                            <div class="d-flex flex-row  mt-1 mb-1 justify-content-around">
-                                <div class="w-25">{{ item.count }}x</div>
-                                <div class="d-flex flex-row flex-wrap w-25">
-                                    <div> {{ item.product.name }}</div>
-                                </div>
-                                <div class="w-25">{{ item.price }} grn</div>
+                            <div class="d-flex flex-row mt-2 mb-1 justify-content-around align-items-center flex-wrap">
+                                <img :src="'/storage/images/products/' + item.product.imagePath"
+                                     alt="product img" class="img rounded-5 card-img w-25">
+                                <div> {{ item.product.name }}</div>
+                                <div class="fw-bolder">{{ item.price }} grn</div>
                             </div>
-                            <div @click.prevent="deleteItemFromBasket(item)" class="btn btn-danger ms-5 me-5 mb-3 mt-3">Видалити</div>
+                            <div class="d-flex flex-row justify-content-between mb-1 mt-2 align-items-center">
+                                <div class="fw-bold ms-5">{{ item.count }}x</div>
+                                <div class="text-end">
+                                    <img @click.prevent="deleteItemFromBasket(item)"
+                                         :src="'/storage/images/static/delete.svg'" alt="delete"
+                                         class="img card-img me-5 mt-1 mb-1 dlt-btn">
+                                </div>
+                            </div>
                         </div>
                     </template>
 
                     <template v-if="basket.length > 0 && token">
-                        <div @click.prevent="clickCheckout" class="btn btn-primary ms-5 me-5 mt-3 mb-3">Оформити</div>
+                        <div @click.prevent="clickCheckout" class="btn btn-primary ms-5 me-5 mt-3 mb-3">Checkout</div>
                     </template>
                     <template v-if="!token">
                         <div class="text-danger">You need authorize to checkout</div>
@@ -475,7 +479,8 @@ export default {
                                     <div class="btn btn-dark" @click.prevent="plusCount">+</div>
                                 </div>
                                 <div class="text-center mt-1">Total: {{ this.totalProductPrice }}</div>
-                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Add to basket
+                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Add to
+                                    basket
                                 </div>
                             </div>
                         </div>
@@ -488,14 +493,15 @@ export default {
                                 </div>
                                 <div>{{ selectedProduct.name }}</div>
                                 <div>Price: <b>{{ selectedProduct.price }}</b></div>
-                                <div class="mb-1">{{ selectedProduct.description}}</div>
+                                <div class="mb-1">{{ selectedProduct.description }}</div>
                                 <div class="d-flex flex-row justify-content-center">
                                     <div class="btn btn-dark" @click.prevent="minusCount">-</div>
                                     <div class="ms-3 me-3 pt-2">{{ selectedCount }}</div>
                                     <div class="btn btn-dark" @click.prevent="plusCount">+</div>
                                 </div>
                                 <div class="text-center mt-1">Total: {{ this.totalProductPrice }}</div>
-                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Add to basket
+                                <div class="btn btn-dark text-center mt-1" @click.prevent="addItemToBasket">Add to
+                                    basket
                                 </div>
                             </div>
                         </div>
@@ -560,4 +566,15 @@ export default {
     object-fit: cover;
     object-position: center;
 }
+
+.dlt-btn {
+    width: 10%;
+    transition: width 0.2s ease;
+}
+
+.dlt-btn:hover {
+    cursor: pointer;
+    width: 12%;
+}
+
 </style>
