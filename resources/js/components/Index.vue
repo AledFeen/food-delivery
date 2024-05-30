@@ -108,28 +108,20 @@ export default {
                     <div class="col-md-3 text-center">
                         <h5>Join Us</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#" class="footer-link">Careers</a></li>
                             <li><a href="#" class="footer-link">For Partners</a></li>
                             <li><a href="#" class="footer-link">Couriers</a></li>
-                            <li><a href="#" class="footer-link">Business</a></li>
                         </ul>
                     </div>
                     <div class="col-md-3 text-center">
                         <h5>Useful Links</h5>
                         <ul class="list-unstyled">
                             <li><a href="#" class="footer-link">About Us</a></li>
-                            <li><a href="#" class="footer-link">FAQs</a></li>
-                            <li><a href="#" class="footer-link">Prime</a></li>
-                            <li><a href="#" class="footer-link">Blog</a></li>
                         </ul>
                     </div>
                     <div class="col-md-3 text-center">
                         <h5>Contact Us</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#" class="footer-link">Security</a></li>
-                            <li><a href="#" class="footer-link">Facebook</a></li>
-                            <li><a href="#" class="footer-link">Twitter</a></li>
-                            <li><a href="#" class="footer-link">Instagram</a></li>
+                            <li><a href="#" class="footer-link">Social link</a></li>
                         </ul>
                     </div>
                     <div class="col-md-3 text-center">
@@ -137,7 +129,6 @@ export default {
                         <ul class="list-unstyled">
                             <li><a href="#" class="footer-link">Privacy Policy</a></li>
                             <li><a href="#" class="footer-link">Cookie Policy</a></li>
-                            <li><a href="#" class="footer-link">Compliance</a></li>
                         </ul>
                     </div>
                 </div>

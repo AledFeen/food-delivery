@@ -99,6 +99,7 @@ export default {
                                     </template>
                                 </template>
                             </div>
+
                         </div>
                     </template>
                 </div>
@@ -108,7 +109,7 @@ export default {
                 <input v-model="address" type="text" placeholder="address" class="form-control mt-3 mb-3">
                 <div>Delivery price: {{ deliveryPrice }}</div>
                 <div class="fw-bold">For total: {{ totalPrice }}</div>
-                <div @click.prevent="checkout" class="btn btn-primary w-100 mt-3 mb-3">Замовити</div>
+                <div @click.prevent="checkout" class="btn btn-primary w-100 mt-3 mb-3">Checkout</div>
             </div>
         </div>
     </div>
