@@ -36,9 +36,19 @@ class StoreController extends Controller
 
     public function getStoresByCityId(Request $request)
     {
+        $request->validate([
+            'page' => 'required|integer',
+            'city_id' => 'required|integer'
+        ]);
+
         $cityId = $request->query('city_id');
-        $stores = DB::select('select s.* from stores s inner join cities_has_stores chs on s.id = chs.store_id where chs.city_id = ?', [$cityId]);
-        return ['stores' => $stores];
+        $page = $request->query('page');
+        $stores = DB::table('stores')
+            ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
+            ->where('cities_has_stores.city_id', $cityId)
+            ->select('stores.*')
+            ->paginate(1, ['*'], 'page', $page);
+        return ['pagination' => $stores];
     }
 
     public function updateStoreProfile(Request $request)

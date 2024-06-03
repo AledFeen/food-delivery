@@ -3,13 +3,14 @@ export default {
     name: "Home",
     data() {
         return {
-            cities: null,
+            cities: [],
             selectedCity: null,
             stores: null,
-            allStores: null,
-            categories: null,
-            types: null,
+            allStores: [],
+            categories: [],
+            types: [],
             selectedFilter: null,
+            pagination: [],
         }
     },
 
@@ -35,13 +36,14 @@ export default {
             })
         },
 
-        getStores() {
+        getStores(page = 1) {
             if(this.selectedCity) {
                 axios.get('/api/stores', {
-                    params: {city_id: this.selectedCity.id}
+                    params: { city_id: this.selectedCity.id, page: page }
                 }).then(res => {
-                    this.stores = res.data.stores
-                    this.allStores = res.data.stores
+                    this.stores = res.data.pagination.data
+                    this.allStores = res.data.pagination.data
+                    this.pagination = res.data.pagination
                 }).catch(error => {
                     console.error('Error fetching posts:', error)
                 })
@@ -140,17 +142,46 @@ export default {
                     </template>
                 </div>
             </div>
-            <div class="w-75 mt-3 d-flex flex-row flex-wrap">
-                <template v-for="store in stores">
-                    <div class="col-4 d-flex flex-column ms-1 me-1 rounded-3 border border-1 h-50">
-                        <div class="image-container rounded-3 h-75">
-                            <img :src="'/storage/images/stores/' + store.image" class="w-100 rounded-3 img" alt="Image">
-                            <div @click.prevent="selectStore(store.id)" class="overlay"></div>
+            <div class="w-75">
+                <!-- Stores -->
+                <div class=" mt-3 d-flex flex-row flex-wrap" style="height: 40%">
+                    <template v-for="store in stores">
+                        <div class="col-4 d-flex flex-column flex-wrap ms-2 me-2 rounded-3 border border-1 h-100">
+                            <div class="image-container rounded-3 h-75">
+                                <img :src="'/storage/images/stores/' + store.image" class="w-100 rounded-3 img" alt="Image">
+                                <div @click.prevent="selectStore(store.id)" class="overlay"></div>
+                            </div>
+                            <h5 class="pt-3 text-center text-dark">{{store.name}}</h5>
                         </div>
-                        <h5 class="pt-2 text-center text-dark">{{store.name}}</h5>
-                    </div>
-                </template>
+                    </template>
+                </div>
+                <!-- Pagination -->
+                <div v-if="pagination.links.length > 1" class="d-flex flex-row justify-content-center mt-5">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li v-if="pagination.current_page !== 1" class="page-item">
+                                <a @click.prevent="getStores(pagination.current_page - 1)" class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li v-for="link in pagination.links" class="page-item">
+                                <template v-if="Number(link.label) &&
+                                    (pagination.current_page - link.label < 2 &&
+                                    pagination.current_page - link.label > -2) ||
+                                    Number(link.label) === 1 || Number(link.label) === pagination.last_page">
+                                    <a @click.prevent="getStores(link.label)" :class="link.active ? 'active' : ''" class="page-link" href="#">{{link.label}}</a>
+                                </template>
+                            </li>
+                            <li v-if="pagination.current_page !== pagination.last_page" class="page-item">
+                                <a  @click.prevent="getStores(pagination.current_page + 1)" class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
+
         </div>
     </template>
 

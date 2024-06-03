@@ -25,7 +25,6 @@ class OrderController extends Controller
 
         try{
             DB::beginTransaction();
-
             // add order
             DB::insert('insert into orders(users_id, cities_id, stores_id, phoneNumber, address, price, created_at) values (?,?,?,?,?,?,?)',
                 [$user, $city, $store, $phone, $address, $price, $date]);
