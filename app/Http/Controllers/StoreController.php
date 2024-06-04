@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -44,34 +45,36 @@ class StoreController extends Controller
 
         $cityId = $request->query('city_id');
         $page = $request->query('page');
-        $stores = DB::table('stores')
-            ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
-            ->where('cities_has_stores.city_id', $cityId)
-            ->select('stores.*')
-            ->paginate(12, ['*'], 'page', $page);
-
         $filter = $request->query('filter');
+
         if ($filter) {
             $parts = explode('_', $filter);
             if(count($parts) === 3 ) {
                 $type = $parts[1];
                 $name = $parts[2];
                 if($type == 'type') {
-                    foreach ($stores as $key => $item) {
-                        if ($item->type_store !== $name) {
-                            unset($stores[$key]);
-                        }
-                    }
+                    $stores = DB::table('stores')
+                        ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
+                        ->where('cities_has_stores.city_id', $cityId)
+                        ->where('stores.type_store', '=', $name)
+                        ->select('stores.*')
+                        ->paginate(1, ['*'], 'page', $page);
                 } else if ($type == 'category') {
-                    foreach ($stores as $key => $item) {
-                        if ($item->category !== $name) {
-                            unset($stores[$key]);
-                        }
-                    }
+                    $stores = DB::table('stores')
+                        ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
+                        ->where('cities_has_stores.city_id', $cityId)
+                        ->where('stores.category', '=', $name)
+                        ->select('stores.*')
+                        ->paginate(1, ['*'], 'page', $page);
                 }
             }
+        } else {
+            $stores = DB::table('stores')
+                ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
+                ->where('cities_has_stores.city_id', $cityId)
+                ->select('stores.*')
+                ->paginate(1, ['*'], 'page', $page);
         }
-
         return ['pagination' => $stores];
     }
 
