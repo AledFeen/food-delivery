@@ -6,7 +6,6 @@ export default {
             cities: [],
             selectedCity: null,
             stores: null,
-            allStores: [],
             categories: [],
             types: [],
             selectedFilter: null,
@@ -39,10 +38,9 @@ export default {
         getStores(page = 1) {
             if(this.selectedCity) {
                 axios.get('/api/stores', {
-                    params: { city_id: this.selectedCity.id, page: page }
+                    params: { city_id: this.selectedCity.id, page: page, filter: this.selectedFilter }
                 }).then(res => {
                     this.stores = res.data.pagination.data
-                    this.allStores = res.data.pagination.data
                     this.pagination = res.data.pagination
                 }).catch(error => {
                     console.error('Error fetching posts:', error)
@@ -75,20 +73,18 @@ export default {
 
             let filteredShops = [];
             if (number === 0) {
-                filteredShops = this.allStores.filter(store => store.type_store === filter.name)
                 const element = document.getElementById("filter_type_" + filter.name)
                 element.classList.add("bg-primary")
                 this.selectedFilter = "filter_type_" + filter.name
-                this.stores = filteredShops
+                this.getStores()
             } else if (number === 1) {
-                filteredShops = this.allStores.filter(store => store.category === filter.name)
                 const element = document.getElementById("filter_category_" + filter.name)
                 element.classList.add("bg-primary")
                 this.selectedFilter = "filter_category_" + filter.name
-                this.stores = filteredShops
+                this.getStores()
             } else {
-                this.stores = this.allStores
                 this.selectedFilter = null
+                this.getStores()
             }
         },
 
@@ -156,7 +152,7 @@ export default {
                     </template>
                 </div>
                 <!-- Pagination -->
-                <div v-if="pagination.links.length > 1" class="d-flex flex-row justify-content-center mt-5">
+                <div v-if="pagination.last_page > Number(1)" class="d-flex flex-row justify-content-center mt-5">
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <li v-if="pagination.current_page !== 1" class="page-item">
@@ -235,6 +231,7 @@ export default {
     .filter {
         background-color: rgba(0, 0, 0, 0);
         transition: background-color 0.3s ease;
+        cursor: pointer;
     }
 
     .overlay:hover {

@@ -38,7 +38,8 @@ class StoreController extends Controller
     {
         $request->validate([
             'page' => 'required|integer',
-            'city_id' => 'required|integer'
+            'city_id' => 'required|integer',
+            'filter' => 'nullable|string'
         ]);
 
         $cityId = $request->query('city_id');
@@ -47,7 +48,30 @@ class StoreController extends Controller
             ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
             ->where('cities_has_stores.city_id', $cityId)
             ->select('stores.*')
-            ->paginate(1, ['*'], 'page', $page);
+            ->paginate(12, ['*'], 'page', $page);
+
+        $filter = $request->query('filter');
+        if ($filter) {
+            $parts = explode('_', $filter);
+            if(count($parts) === 3 ) {
+                $type = $parts[1];
+                $name = $parts[2];
+                if($type == 'type') {
+                    foreach ($stores as $key => $item) {
+                        if ($item->type_store !== $name) {
+                            unset($stores[$key]);
+                        }
+                    }
+                } else if ($type == 'category') {
+                    foreach ($stores as $key => $item) {
+                        if ($item->category !== $name) {
+                            unset($stores[$key]);
+                        }
+                    }
+                }
+            }
+        }
+
         return ['pagination' => $stores];
     }
 
