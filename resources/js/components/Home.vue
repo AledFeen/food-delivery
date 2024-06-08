@@ -1,6 +1,11 @@
 <script>
+
+import debounce from 'lodash/debounce';
+import {ref, watch} from "vue";
+
 export default {
     name: "Home",
+
     data() {
         return {
             cities: [],
@@ -10,13 +15,18 @@ export default {
             types: [],
             selectedFilter: null,
             pagination: [],
+            searchTerm: ref('')
         }
     },
 
     watch: {
+        searchTerm: debounce(function(newValue, oldValue) {
+            this.getStores();
+        }, 700),
+
         selectedCity(newValue, oldValue) {
             this.getStores()
-        }
+        },
     },
 
     mounted() {
@@ -36,10 +46,18 @@ export default {
         },
 
         getStores(page = 1) {
+
             if(this.selectedCity) {
+                const element = document.getElementById('search');
+                let searchFilter = ''
+                if(element !== null) {
+                    searchFilter = element.value
+                }
+                console.log(searchFilter)
                 axios.get('/api/stores', {
-                    params: { city_id: this.selectedCity.id, page: page, filter: this.selectedFilter }
+                    params: { city_id: this.selectedCity.id, page: page, filter: this.selectedFilter, searchFilter: 'search_' + String(searchFilter) }
                 }).then(res => {
+                    console.log(res)
                     this.stores = res.data.pagination.data
                     this.pagination = res.data.pagination
                 }).catch(error => {
@@ -84,6 +102,7 @@ export default {
                 this.getStores()
             } else {
                 this.selectedFilter = null
+                this.searchTerm = ''
                 this.getStores()
             }
         },
@@ -119,6 +138,11 @@ export default {
         <div class="d-flex flex-row">
             <div class="w-25">
                 <div class="d-flex flex-column text-center">
+                    <div class="input-group mb-3 w-75">
+                        <input v-model="searchTerm" id="search" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search">
+                     <!--   <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button> -->
+                    </div>
+
                     <div :id="'clear_filter'" @click.prevent="selectFilter(15,null)" class="btn btn-danger mb-3 w-75">Clear</div>
                     <template v-if="types">
                         <h4 class="text-dark text-start">Type shop</h4>
@@ -141,6 +165,7 @@ export default {
             <div class="w-75">
                 <!-- Stores -->
                 <div class=" mt-3 d-flex flex-row flex-wrap" style="height: 40%">
+                    <template v-if="stores.length < 1"> <h1 class="align-items-center-center">No results</h1> </template>
                     <template v-for="store in stores">
                         <div class="col-4 d-flex flex-column flex-wrap ms-2 me-2 rounded-3 border border-1 h-100">
                             <div class="image-container rounded-3 h-75">

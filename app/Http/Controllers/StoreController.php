@@ -40,12 +40,16 @@ class StoreController extends Controller
         $request->validate([
             'page' => 'required|integer',
             'city_id' => 'required|integer',
-            'filter' => 'nullable|string'
+            'filter' => 'nullable|string',
+            'searchFilter' => 'required|string'
         ]);
 
         $cityId = $request->query('city_id');
         $page = $request->query('page');
         $filter = $request->query('filter');
+        $search = $request->query('searchFilter');
+        $search = explode('_', $search);
+        $searchTerm = $search[1];
 
         if ($filter) {
             $parts = explode('_', $filter);
@@ -57,6 +61,7 @@ class StoreController extends Controller
                         ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
                         ->where('cities_has_stores.city_id', $cityId)
                         ->where('stores.type_store', '=', $name)
+                        ->where('stores.name', 'like', '%' . $searchTerm . '%')
                         ->select('stores.*')
                         ->paginate(1, ['*'], 'page', $page);
                 } else if ($type == 'category') {
@@ -64,6 +69,7 @@ class StoreController extends Controller
                         ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
                         ->where('cities_has_stores.city_id', $cityId)
                         ->where('stores.category', '=', $name)
+                        ->where('stores.name', 'like', '%' . $searchTerm . '%')
                         ->select('stores.*')
                         ->paginate(1, ['*'], 'page', $page);
                 }
@@ -72,10 +78,11 @@ class StoreController extends Controller
             $stores = DB::table('stores')
                 ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
                 ->where('cities_has_stores.city_id', $cityId)
+                ->where('stores.name', 'like', '%' . $searchTerm . '%')
                 ->select('stores.*')
-                ->paginate(1, ['*'], 'page', $page);
+                ->paginate(12, ['*'], 'page', $page);
         }
-        return ['pagination' => $stores];
+        return ['pagination' => $stores, 'search' => $searchTerm];
     }
 
     public function updateStoreProfile(Request $request)
