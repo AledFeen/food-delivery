@@ -13,6 +13,14 @@ class OrderController extends Controller
 {
     public function checkout(Request $request)
     {
+        $request -> validate([
+            'store' => 'required|integer',
+            'city' => 'required|integer',
+            'phone' => 'required|integer|min:10|max:15',
+            'address' => 'required|string',
+            'price' => 'required|integer'
+        ]);
+
         $store = $request->input('store');
         $city = $request->input('city');
         $basket = $request->input('basket');
@@ -64,6 +72,10 @@ class OrderController extends Controller
     }
 
     public function selectOrderForDelivery(Request $request) {
+        $request -> validate([
+            'orderId' => 'required|integer',
+        ]);
+
         $orderId = $request->input('orderId');
         $user_id = Auth::id();
         $courier = DB::selectOne('select * from couriers where users_id = ? limit 1', [$user_id]);
@@ -109,6 +121,10 @@ class OrderController extends Controller
     }
 
     public function submitDelivery(Request $request) {
+        $request -> validate([
+            'orderId' => 'required|integer'
+        ]);
+
         $dateTime = new DateTime();
         $date = $dateTime->format('Y-m-d H:i:s');
         $orderId = $request->input('orderId');

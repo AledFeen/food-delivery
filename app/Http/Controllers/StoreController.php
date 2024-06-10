@@ -30,6 +30,10 @@ class StoreController extends Controller
 
     public function getStoreById(Request $request)
     {
+        $request->validate([
+        'id' => 'required|integer'
+        ]);
+
         $id = $request->query('id');
         $store = DB::selectOne('select * from stores where id = ? limit 1', [$id]);
         return ['store' => $store];
@@ -88,6 +92,10 @@ class StoreController extends Controller
     public function updateStoreProfile(Request $request)
     {
         $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'type_store' => 'required|string',
+            'store_category' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 

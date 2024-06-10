@@ -23,6 +23,10 @@ class CityController extends Controller
     }
     public function addCityToStore(Request $request)
     {
+        $request->validate([
+            'city_id' => 'required|integer'
+        ]);
+
         $city_id = $request->input('city_id');
         $user_id = Auth::id();
         $store_id = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);

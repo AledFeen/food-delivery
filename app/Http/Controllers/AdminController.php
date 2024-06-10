@@ -60,6 +60,14 @@ class AdminController extends Controller
     }
 
     public function addStore(Request $request) {
+
+        $request->validate([
+            'user_id' => 'required|integer',
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'type_store' => 'required|string',
+        ]);
+
         $name = $request->input('name');
         $description = $request->input('description');
         $user_id = $request->input('user_id');

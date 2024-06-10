@@ -15,6 +15,10 @@ class CategoryController extends Controller
 {
     public function addMainCategory(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string'
+        ]);
+
         $user_id = Auth::id();
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
 
@@ -27,6 +31,11 @@ class CategoryController extends Controller
 
     public function addSubCategory(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string',
+            'parent' => 'required|integer'
+        ]);
+
         $user_id = Auth::id();
         $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
         $storeId = $store->id;
@@ -38,6 +47,10 @@ class CategoryController extends Controller
     }
 
     public function getCategoriesByStoreId(Request $request) {
+        $request->validate([
+            'store_id' => 'required|integer'
+        ]);
+
         $storeId = $request->query('store_id');
         $categories = DB::select('select * from categories where store_id = ?', [$storeId]);
         $filteredCategories = $this->refactorCategories($categories);
@@ -105,6 +118,11 @@ class CategoryController extends Controller
     }
 
     public function deleteSubcategory(Request $request) {
+
+        $request->validate([
+            'category' => 'required|integer'
+        ]);
+
         try {
             DB::beginTransaction();
 
@@ -131,6 +149,11 @@ class CategoryController extends Controller
     }
 
     public function deleteCategory(Request $request) {
+
+        $request->validate([
+            'category' => 'required|integer'
+        ]);
+
         try {
             DB::beginTransaction();
 
