@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Store;
 use Carbon\Carbon;
 use DateTime;
 use Exception;
@@ -13,7 +14,6 @@ use Illuminate\Support\Facades\Storage;
 
 class StoreController extends Controller
 {
-
     public function checkStoreExistence()
     {
         $user = DB::selectOne('select * from stores where users_id = ?', [Auth::id()]);
@@ -24,18 +24,18 @@ class StoreController extends Controller
     public function selectUserStore()
     {
         $user_id = Auth::id();
-        $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
+        $store = Store::where('users_id', $user_id)->first();
         return ['store' => $store];
     }
 
     public function getStoreById(Request $request)
     {
         $request->validate([
-        'id' => 'required|integer'
+            'id' => 'required|integer'
         ]);
 
         $id = $request->query('id');
-        $store = DB::selectOne('select * from stores where id = ? limit 1', [$id]);
+        $store = Store::find($id);
         return ['store' => $store];
     }
 
@@ -57,33 +57,30 @@ class StoreController extends Controller
 
         if ($filter) {
             $parts = explode('_', $filter);
-            if(count($parts) === 3 ) {
+            if (count($parts) === 3) {
                 $type = $parts[1];
                 $name = $parts[2];
-                if($type == 'type') {
-                    $stores = DB::table('stores')
-                        ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
-                        ->where('cities_has_stores.city_id', $cityId)
-                        ->where('stores.type_store', '=', $name)
-                        ->where('stores.name', 'like', '%' . $searchTerm . '%')
-                        ->select('stores.*')
-                        ->paginate(1, ['*'], 'page', $page);
+                if ($type == 'type') {
+                    $stores = Store::whereHas('cities', function ($query) use ($cityId) {
+                        $query->where('cities.id', $cityId);
+                    })
+                        ->where('type_store', '=', $name)
+                        ->where('name', 'like', '%' . $searchTerm . '%')
+                        ->paginate(12, ['*'], 'page', $page);
                 } else if ($type == 'category') {
-                    $stores = DB::table('stores')
-                        ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
-                        ->where('cities_has_stores.city_id', $cityId)
-                        ->where('stores.category', '=', $name)
-                        ->where('stores.name', 'like', '%' . $searchTerm . '%')
-                        ->select('stores.*')
-                        ->paginate(1, ['*'], 'page', $page);
+                    $stores = Store::whereHas('cities', function ($query) use ($cityId) {
+                        $query->where('cities.id', $cityId);
+                    })
+                        ->where('category', '=', $name)
+                        ->where('name', 'like', '%' . $searchTerm . '%')
+                        ->paginate(12, ['*'], 'page', $page);
                 }
             }
         } else {
-            $stores = DB::table('stores')
-                ->join('cities_has_stores', 'stores.id', '=', 'cities_has_stores.store_id')
-                ->where('cities_has_stores.city_id', $cityId)
-                ->where('stores.name', 'like', '%' . $searchTerm . '%')
-                ->select('stores.*')
+            $stores = Store::whereHas('cities', function ($query) use ($cityId) {
+                $query->where('cities.id', $cityId);
+            })
+                ->where('name', 'like', '%' . $searchTerm . '%')
                 ->paginate(12, ['*'], 'page', $page);
         }
         return ['pagination' => $stores, 'search' => $searchTerm];
@@ -99,25 +96,31 @@ class StoreController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        if ($request->file('image')->isValid()) {
-            $user_id = Auth::id();
-            $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
-            $im = $store->image;
-            Storage::delete('/public/images/stores/' . $im);
+        $user_id = Auth::id();
+        $store = DB::selectOne('select * from stores where users_id = ? limit 1', [$user_id]);
+        $im = $store->image;
+        Storage::delete('/public/images/stores/' . $im);
 
-            $name = $request->input('name');
-            $description = $request->input('description');
-            $type_store = $request->input('type_store');
-            $store_category = $request->input('store_category');
-            $dateTime = new DateTime();
-            $date = $dateTime->format('Y-m-d');
-            $image = $request->file('image');
-            $imagePath = Storage::put('/public/images/stores', $image);
-            $imageName = basename($imagePath);
-            DB::update('update stores set name = ?, description = ?, image = ?, type_store = ?, category = ?, updated_at = ? where id = ?',
-                [$name, $description, $imageName, $type_store, $store_category, $date, $store->id]);
-            return back()->with('success', 'Successfully added.');
-        }
-        return back()->with('error', 'Incorrect image format.');
+        $name = $request->input('name');
+        $description = $request->input('description');
+        $type_store = $request->input('type_store');
+        $store_category = $request->input('store_category');
+        $dateTime = new DateTime();
+        $date = $dateTime->format('Y-m-d');
+        $image = $request->file('image');
+        $imagePath = Storage::put('/public/images/stores', $image);
+        $imageName = basename($imagePath);
+
+        $store = Store::find($store->id);
+        $store->update([
+            'name' => $name,
+            'description' => $description,
+            'image' => $imageName,
+            'type_store' => $type_store,
+            'category' => $store_category,
+            'updated_at' => $date,
+        ]);
+
+        return back()->with('success', 'Successfully added.');
     }
 }
