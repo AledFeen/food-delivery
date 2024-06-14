@@ -73,6 +73,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::get('/user/admin', [AdminController::class, 'selectAdmin']);
             Route::get('/admin/users/get', [AdminController::class, 'getUsers']);
             Route::post('/admin/users/add', [AdminController::class, 'addStore']);
+            Route::delete('/admin/store/delete', [AdminController::class, 'deleteStore']);
+            Route::post('/admin/courier/add', [AdminController::class, 'addCourier']);
         });
 
         Route::get('/user/check/courier', [CourierController::class, 'checkCourierExistence']);

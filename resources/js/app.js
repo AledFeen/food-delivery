@@ -17,6 +17,7 @@ import StoreProfile from "./components/StoreProfile.vue";
 import StorePanel from "./components/StorePanel.vue";
 import Checkout from "./components/Checkout.vue";
 import Orders from "./components/MyOrders.vue";
+import AddCourier from "./components/AddCourier.vue";
 
 const app = createApp({});
 
@@ -42,12 +43,12 @@ const routes = [
     //courier
     {path: '/courierPanel', name: 'user.courier', component: Courier},
 
+
     //admin
     {path: '/adminPanel', name: 'user.admin', component: Admin},
     {path: '/users', name: 'admin.users', component: Users},
     {path: '/addStore/:userId', name: 'admin.addStore', props: true, component: AddStore},
-
-
+    {path: '/addCourier/:userId', name: 'admin.addCourier', props: true, component: AddCourier},
 ]
 
 const router = createRouter({
@@ -61,7 +62,6 @@ router.beforeEach((to, from, next) => {
     const isAdmin = localStorage.getItem('isAdmin')
     const isCourier = localStorage.getItem('isCourier')
 
-    ////защитить /myStore от входа по урл
     if (!token) {
         if (to.name === 'user.login' || to.name === 'user.registration' || to.name === 'home.index' || to.name === 'store') {
             return next();
@@ -124,6 +124,13 @@ router.beforeEach((to, from, next) => {
                 }
                 break;
             case 'admin.addStore':
+                if (isAdmin === 'false') {
+                    next({name: 'home.index'});
+                } else {
+                    next();
+                }
+                break;
+            case 'admin.addCourier':
                 if (isAdmin === 'false') {
                     next({name: 'home.index'});
                 } else {

@@ -71,22 +71,26 @@ export default {
         },
 
         addStore() {
-            const formData = new FormData()
-            formData.append('name', this.label)
-            formData.append('description', this.description)
-            formData.append('user_id', this.userId)
-            formData.append('image', this.image)
-            const selectElement = document.getElementById("typeSelect")
-            const selectedOption = selectElement.options[selectElement.selectedIndex].value
-            formData.append('type_store', selectedOption)
-            axios.post('/api/admin/users/add', formData)
-                .then(res => {
-                    this.$router.push({ name: 'admin.users'});
-                })
-                .catch(error => {
-                    console.error('Error fetching store:', error)
-                    window.alert("Error. Try again.");
-                })
+            const userConfirmed = confirm("Are you sure you want to continue?");
+
+            if (userConfirmed) {
+                const formData = new FormData()
+                formData.append('name', this.label)
+                formData.append('description', this.description)
+                formData.append('user_id', this.userId)
+                formData.append('image', this.image)
+                const selectElement = document.getElementById("typeSelect")
+                const selectedOption = selectElement.options[selectElement.selectedIndex].value
+                formData.append('type_store', selectedOption)
+                axios.post('/api/admin/users/add', formData)
+                    .then(res => {
+                        this.$router.push({ name: 'admin.users'});
+                    })
+                    .catch(error => {
+                        console.error('Error fetching store:', error)
+                        window.alert("Error. Try again.");
+                    })
+            }
         }
     }
 }

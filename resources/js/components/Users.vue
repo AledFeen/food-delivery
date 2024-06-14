@@ -49,6 +49,26 @@ export default {
             if (this.selectedUser) {
                 this.$router.push({ name: 'admin.addStore', params: { userId: this.selectedUser } });
             }
+        },
+
+        deleteStore() {
+            const userConfirmed = confirm("Are you sure you want to continue?");
+            if (userConfirmed) {
+                axios.delete('/api/admin/store/delete', {
+                    data: {
+                        userId: this.selectedUser
+                    }
+                }).catch(error => {
+                    alert(error.response.data.message)
+                    console.error(error);
+                });
+            }
+        },
+
+        addCourier() {
+            if (this.selectedUser) {
+                this.$router.push({ name: 'admin.addCourier', params: { userId: this.selectedUser } });
+            }
         }
     },
 }
@@ -83,10 +103,9 @@ export default {
                 </tr>
                 <tr :class="isSelected(user.user.id) ? '' : 'd-none'">
                     <th scope="row"></th>
-                    <td v-if="!hasStore"><a href="#" @click.prevent="addStore()" class="btn btn-secondary w-100">Add store</a></td>
-                    <td  v-if="hasStore"><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete store</a></td>
-                    <td v-if="!isCourier"><a href="#" @click.prevent="" class="btn btn-secondary w-100">Add courier</a></td>
-                    <td v-if="isCourier"><a href="#" @click.prevent="" class="btn btn-danger w-100">Delete courier</a></td>
+                    <td v-if="!hasStore"><a href="" @click.prevent="addStore" class="btn btn-secondary w-100">Add store</a></td>
+                    <td  v-if="hasStore"><a href="" @click.prevent="deleteStore" class="btn btn-danger w-100">Delete store</a></td>
+                    <td v-if="!isCourier"><a href="" @click.prevent="addCourier" class="btn btn-secondary w-100">Add courier</a></td>
                 </tr>
             </template>
             </tbody>

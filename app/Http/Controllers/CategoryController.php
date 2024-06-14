@@ -172,7 +172,6 @@ class CategoryController extends Controller
                     Storage::delete('/public/images/products/' . $image->imagePath);
                     DB::delete('delete from products where id = ?', [$product->id]);
                 }
-
                 DB::delete('delete from categories where id = ?', [$subCategory->id]);
             }
 

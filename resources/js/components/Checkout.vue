@@ -41,25 +41,27 @@ export default {
             var phonePattern = /^\+?(\d{1,3})?\s?\(?(\d{3})\)?[-.\s]?(\d{3})[-.\s]?(\d{2})[-.\s]?(\d{2})$/;
 
             if (this.address && phonePattern.test(this.phone)) {
-                axios.post('/api/checkout', {
-                    city: city,
-                    store: store,
-                    basket: this.basket,
-                    phone: this.phone,
-                    address: this.address,
-                    price: this.totalPrice
-                })
-                    .then(() => {
-                        this.$router.push({name: 'orders'})
+                const userConfirmed = confirm("Are you sure you want to continue?");
+                if (userConfirmed) {
+                    axios.post('/api/checkout', {
+                        city: city,
+                        store: store,
+                        basket: this.basket,
+                        phone: this.phone,
+                        address: this.address,
+                        price: this.totalPrice
                     })
-                    .catch(error => {
-                        console.error('Error fetching store:', error)
-                        window.alert("Error. Try again.");
-                    })
+                        .then(() => {
+                            this.$router.push({name: 'orders'})
+                        })
+                        .catch(error => {
+                            console.error('Error fetching store:', error)
+                            window.alert("Error. Try again.");
+                        })
+                }
             } else {
                 window.alert('Uncorrected validation')
             }
-
         }
     }
 }
@@ -74,8 +76,10 @@ export default {
                     <template v-if="basket && basket.length > 0" v-for="(item, index) in basket">
                         <div class="d-block border border-1 m-2 rounded-3">
 
-                            <div class="d-flex flex-row mt-2 mb-1 justify-content-between align-items-center flex-wrap h-100" >
-                                <div class="d-flex flex-row mt-2 mb-1 justify-content-between align-items-center flex-wrap">
+                            <div
+                                class="d-flex flex-row mt-2 mb-1 justify-content-between align-items-center flex-wrap h-100">
+                                <div
+                                    class="d-flex flex-row mt-2 mb-1 justify-content-between align-items-center flex-wrap">
                                     <img :src="'/storage/images/products/' + item.product.imagePath"
                                          alt="product img" class="img rounded-5 card-img w-25 ps-3">
                                     <div class="fw-bold text-end">{{ item.count }}x</div>
