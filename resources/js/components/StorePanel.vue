@@ -1,9 +1,14 @@
 <script>
+import AddProduct from "./AddProduct.vue";
+
 export default {
     name: "Categories",
+    components: {AddProduct},
 
     data() {
         return {
+            renderComponent: true,
+
             categories: null,
             maxPath: 0,
             name: null,
@@ -72,7 +77,23 @@ export default {
 
         selectCategoryForAddProduct() {
             const modalOpenButton = document.getElementById('openModalProduct');
+            localStorage.setItem('currentCategoryId', this.selectedCategory.id)
             modalOpenButton.click();
+        },
+
+        handleProductAdded() {
+            this.getProductsForCategory(this.selectedCategory.id);
+            const closeBtn = document.getElementById('btnCloseProduct');
+            if (closeBtn) {
+                closeBtn.click();
+            }
+           this.forceRerender()
+        },
+
+        async forceRerender() {
+            this.renderComponent = false;
+            await this.$nextTick();
+            this.renderComponent = true;
         },
 
         openAddMainCategory() {
@@ -116,19 +137,19 @@ export default {
             const btn = document.getElementById('btn_category' + id);
             if (btn.alt === "btn_open") {
                 btn.alt = 'btn_close'
-                btn.style.transform = 'rotate(-90deg)';
+                btn.style.transform = 'rotate(-90deg)'
             } else {
                 btn.alt = 'btn_open'
-                btn.style.transform = 'rotate(0deg)';
+                btn.style.transform = 'rotate(0deg)'
             }
 
-            const childsBlock = document.getElementById('childs_' + id);
+            const childsBlock = document.getElementById('childs_' + id)
             if (childsBlock.classList.contains('d-none')) {
-                childsBlock.classList.remove('d-none');
-                childsBlock.classList.add('d-block');
+                childsBlock.classList.remove('d-none')
+                childsBlock.classList.add('d-block')
             } else {
-                childsBlock.classList.remove('d-block');
-                childsBlock.classList.add('d-none');
+                childsBlock.classList.remove('d-block')
+                childsBlock.classList.add('d-none')
             }
         },
 
@@ -136,32 +157,6 @@ export default {
             if (!this.selectedCategory && this.categories) {
                 this.selectedCategory = this.categories[0]
             }
-        },
-
-        handleFileChange() {
-            if (this.$refs.fileInput) {
-                this.image = this.$refs.fileInput.files[0]
-            }
-        },
-
-        addProduct() {
-            const formData = new FormData()
-            formData.append('name', this.productName)
-            formData.append('description', this.productDescription)
-            formData.append('image', this.image)
-            formData.append('price', this.productPrice)
-            formData.append('category_id', this.selectedCategory.id)
-            axios.post('/api/store/add/product', formData)
-                .then(() => {
-                    this.getProductsForCategory(this.selectedCategory.id)
-                    //this.selectedCategory = this.selectedCategory
-                    const closeBtn = document.getElementById('btnCloseProduct');
-                    closeBtn.click();
-                })
-                .catch(error => {
-                    console.error('Error fetching store:', error)
-                    window.alert("Error. Try again. " + error.response.data.message);
-                })
         },
 
         updateProduct() {
@@ -464,47 +459,10 @@ export default {
             </div>
         </div>
 
-        <!-- Modal 2 -->
-
+        <!-- Modal 2 add product -->
         <div class="modal fade" id="ModalToggleProduct" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
              tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Add product</h1>
-                        <button id="btnCloseProduct" type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-floating mb-3 mt-3">
-                            <input type="text" class="form-control" id="name" placeholder="" v-model="productName">
-                            <label for="name">Name</label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text">Description</span>
-                                <textarea v-model="productDescription" class="form-control"
-                                          aria-label="With textarea"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-floating mb-3 mt-3">
-                            <input type="number" class="form-control" id="price" placeholder="" v-model="productPrice">
-                            <label for="price">Price</label>
-                        </div>
-
-                        <div class="input-group mb-3">
-                            <input type="file" class="form-control" id="inputGroupFile" ref="fileInput"
-                                   @change="handleFileChange">
-                            <label class="input-group-text" for="inputGroupFile">Upload</label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" @click.prevent="addProduct">Add product</button>
-                    </div>
-                </div>
-            </div>
+            <add-product v-if="renderComponent" @productAdded="handleProductAdded"></add-product>
         </div>
 
         <!-- Modal 3 -->

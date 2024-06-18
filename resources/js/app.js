@@ -18,6 +18,7 @@ import StorePanel from "./components/StorePanel.vue";
 import Checkout from "./components/Checkout.vue";
 import Orders from "./components/MyOrders.vue";
 import AddCourier from "./components/AddCourier.vue";
+import AddProduct from "./components/AddProduct.vue";
 
 const app = createApp({});
 
