@@ -73,7 +73,7 @@ class StoreController extends Controller
                     })
                         ->where('category', '=', $name)
                         ->where('name', 'like', '%' . $searchTerm . '%')
-                        ->paginate(12, ['*'], 'page', $page);
+                            ->paginate(12, ['*'], 'page', $page);
                 }
             }
         } else {

@@ -12,6 +12,7 @@ export default {
     },
 
     mounted() {
+
         this.getToken()
     },
 

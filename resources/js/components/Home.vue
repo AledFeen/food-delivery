@@ -46,14 +46,13 @@ export default {
         },
 
         getStores(page = 1) {
-
             if(this.selectedCity) {
                 const element = document.getElementById('search');
                 let searchFilter = ''
                 if(element !== null) {
                     searchFilter = element.value
                 }
-                console.log(searchFilter)
+                //console.log(searchFilter)
                 axios.get('/api/stores', {
                     params: { city_id: this.selectedCity.id, page: page, filter: this.selectedFilter, searchFilter: 'search_' + String(searchFilter) }
                 }).then(res => {
@@ -201,8 +200,8 @@ export default {
                         </ul>
                     </nav>
                 </div>
-            </div>
 
+            </div>
         </div>
     </template>
 
